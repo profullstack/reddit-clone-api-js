@@ -1,6 +1,7 @@
 import { body, validationResult } from 'express-validator'
 import Post from '../models/post'
 import User from '../models/user'
+import Category from '../models/category'
 
 export const load = async (req, res, next, id) => {
   try {
@@ -28,7 +29,8 @@ export const list = async (req, res) => {
 }
 
 export const listByCategory = async (req, res) => {
-  const category = req.params.category
+  const name = req.params.category
+  const category = await Category.find({ name })
   const posts = await Post.find({ category }).sort('-score')
   res.json(posts)
 }
