@@ -3,6 +3,7 @@ import { jwtAuth, postAuth, commentAuth } from './auth'
 import users from './controllers/users'
 import posts from './controllers/posts'
 import comments from './controllers/comments'
+import category from './controllers/category'
 
 const wrap = fn => (...args) => fn(...args).catch(args[2])
 
@@ -21,6 +22,8 @@ router.get('/post/:post/upvote', jwtAuth, posts.upvote)
 router.get('/post/:post/downvote', jwtAuth, posts.downvote)
 router.get('/post/:post/unvote', jwtAuth, posts.unvote)
 router.get('/user/:user', posts.listByUser)
+router.post('/category', jwtAuth, category.validate, wrap(category.create))
+router.get('/category', category.list)
 
 router.param('comment', comments.load)
 router.post('/post/:post', jwtAuth, comments.validate, comments.create)
