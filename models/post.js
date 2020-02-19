@@ -17,7 +17,7 @@ const postSchema = new Schema({
   title: { type: String, required: true },
   url: { type: String },
   author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  category: { type: String, required: true },
+  category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   score: { type: Number, default: 0 },
   votes: [{ user: Schema.Types.ObjectId, vote: Number, _id: false }],
   comments: [commentSchema],
@@ -77,7 +77,7 @@ postSchema.methods.removeComment = function (id) {
 }
 
 postSchema.pre(/^find/, function () {
-  this.populate('author').populate('comments.author')
+  this.populate('author').populate('comments.author').populate('category')
 })
 
 postSchema.pre('save', function (next) {
