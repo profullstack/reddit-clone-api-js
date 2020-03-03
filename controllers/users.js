@@ -97,7 +97,7 @@ export const inbox = async (req, res) => {
 };
 
 export const deleteInbox = async (req, res) => {
-  await User.updateOne({ 'inbox.comment': req.params.id }, { $pull: { inbox: { comment: req.params.id } } })
+  await User.updateOne({ _id: req.user.id, 'inbox.comment': req.params.id }, { $pull: { inbox: { comment: req.params.id } } })
     .catch(() => res.status(500).send());
   res.status(200).send();
 };
