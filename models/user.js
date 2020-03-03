@@ -5,6 +5,10 @@ const userSchema = new Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   admin: Boolean,
+  inbox: [{
+    comment: Schema.Types.ObjectId,
+    read: Boolean,
+  }],
 }, { collation: { locale: 'en', strength: 1 } });
 
 userSchema.set('toJSON', { getters: true });

@@ -64,9 +64,11 @@ postSchema.methods.vote = function (user, vote) {
   return this.save();
 };
 
-postSchema.methods.addComment = function (author, body) {
-  this.comments.push({ author, body });
-  return this.save();
+postSchema.methods.addComment = async function (author, body) {
+  const _id = new mongoose.Types.ObjectId();
+  this.comments.push({ _id, author, body });
+  const content = await this.save();
+  return {content, _id}
 };
 
 postSchema.methods.removeComment = function (id) {

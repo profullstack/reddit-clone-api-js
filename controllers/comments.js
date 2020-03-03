@@ -1,4 +1,5 @@
 import { body, validationResult } from 'express-validator/check';
+import User from '../models/user';
 
 export const load = async (req, res, next, id) => {
   req.comment = await req.post.comments.id(id);
@@ -6,9 +7,20 @@ export const load = async (req, res, next, id) => {
   next();
 };
 
-export const create = async (req, res, next) => {
+export const create = async (req, res) => {
   const post = await req.post.addComment(req.user.id, req.body.comment);
-  res.status(201).json(post);
+  res.status(201).json(post.content);
+
+  const users = req.post.author._id === req.user.id ? [] : [req.post.author._id];
+
+  req.post.comments.forEach(comment => {
+    if (!users.includes(comment.author.id) && comment.author.id !== req.user.id) {
+      console.log(comment.author.id, req.user.id);
+      users.push(comment.author.id);
+    }
+  });
+
+  User.updateMany({ _id: users }, { $push: { inbox: { comment: post._id, read: false } } }).exec();
 };
 
 export const destroy = async (req, res, next) => {
