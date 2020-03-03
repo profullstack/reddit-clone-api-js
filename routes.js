@@ -32,6 +32,9 @@ router.get('/retrieve', retrieve.get);
 router.param('comment', comments.load);
 router.post('/post/:post', jwtAuth, comments.validate, comments.create);
 router.delete('/post/:post/:comment', jwtAuth, commentAuth, comments.destroy);
+router.get('/inbox', jwtAuth, users.inbox);
+router.delete('/inbox/:id', jwtAuth, users.deleteInbox);
+router.get('/inbox/count', jwtAuth, users.inboxCount);
 
 router.use('*', (req, res) => res.status(404).json({ message: 'not found' }));
 router.use((err, req, res, next) => res.status(500).json({ errors: err.message }));
