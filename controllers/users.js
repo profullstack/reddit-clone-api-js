@@ -112,4 +112,7 @@ export default {
   login,
   register,
   validate,
+  inbox,
+  deleteInbox,
+  inboxCount,
 };
