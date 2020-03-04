@@ -18,7 +18,7 @@ const debug = log('express-starter:server');
 app.set('port', port);
 
 // refs: https://stackoverflow.com/q/42009672
-app.use(logger('dev', { stream: { write: msg => debug(msg.trimEnd()) } }));
+app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

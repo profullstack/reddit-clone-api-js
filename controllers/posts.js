@@ -24,21 +24,31 @@ export const show = async (req, res) => {
 };
 
 export const list = async (req, res) => {
-  const posts = await Post.find().sort('-score');
+  const { sort = '-score' } = req.query;
+  const posts = await Post.find()
+    .populate('category')
+    .sort(sort)
+    .limit(100);
   res.json(posts);
 };
 
 export const listByCategory = async (req, res) => {
+  const { sort = '-score' } = req.query;
   const name = req.params.category;
   const category = await Category.find({ name });
-  const posts = await Post.find({ category }).sort('-score');
+  const posts = await Post.find({ category })
+    .sort(sort)
+    .limit(100);
   res.json(posts);
 };
 
 export const listByUser = async (req, res) => {
+  const { sort = '-score' } = req.query;
   const username = req.params.user;
   const author = await User.findOne({ username });
-  const posts = await Post.find({ author: author.id }).sort('-created');
+  const posts = await Post.find({ author: author.id })
+    .sort(sort)
+    .limit(100);
   res.json(posts);
 };
 
@@ -50,7 +60,10 @@ export const create = async (req, res, next) => {
   const post = await Post.create({
     title, url, author, category, type, text,
   });
-  res.status(201).json(post);
+  const newPost = await Post.findById(post.id)
+    .populate('category');
+
+  res.status(201).json(newPost);
 };
 
 export const validate = async (req, res, next) => {

@@ -25,6 +25,7 @@ router.delete('/post/:post', jwtAuth, postAuth, posts.destroy);
 router.get('/post/:post/upvote', jwtAuth, posts.upvote);
 router.get('/post/:post/downvote', jwtAuth, posts.downvote);
 router.get('/post/:post/unvote', jwtAuth, posts.unvote);
+router.get('/user/:user/rss', rss.listByUser);
 router.get('/user/:user', posts.listByUser);
 router.post('/category', jwtAuth, category.validate, wrap(category.create));
 router.get('/category', category.list);
