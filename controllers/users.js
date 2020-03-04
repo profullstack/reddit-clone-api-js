@@ -75,7 +75,7 @@ export const inbox = async (req, res) => {
     
     if (post != null) {
       console.log(post);
-      const link = `/a/${post.category.name}/${post._id}#${post.comments[0].id}`;
+      const link = `/a/${post.category.name}/${post._id}#comment-id-${post.comments[0].id}`;
       const com = {
         id: post.comments[0]._id,
         link,
