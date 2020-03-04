@@ -13,14 +13,13 @@ export const create = async (req, res) => {
 
   const users = req.post.author._id === req.user.id ? [] : [req.post.author._id];
 
-  req.post.comments.forEach(comment => {
-    if (!users.includes(comment.author.id) && comment.author.id !== req.user.id) {
-      console.log(comment.author.id, req.user.id);
-      users.push(comment.author.id);
+  for (let i = 0; i < req.post.comments.length; i += 1) {
+    if (!users.includes(req.post.comments[i].author.id) && req.post.comments[i].author.id !== req.user.id) {
+      await users.push(req.post.comments[i].author.id);
     }
-  });
+  }
 
-  User.updateMany({ _id: users }, { $push: { inbox: { comment: post._id, read: false } } }).exec();
+  await User.updateMany({ _id: users }, { $push: { inbox: { comment: post._id, read: false } } });
 };
 
 export const destroy = async (req, res, next) => {
