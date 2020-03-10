@@ -44,8 +44,8 @@ export const validate = async (req, res, next) => {
       .isLength({ min: 8 })
       .withMessage('must be at least 8 characters long')
 
-      .isLength({ max: 72 })
-      .withMessage('must be at most 72 characters long'),
+      .isLength({ max: 200 })
+      .withMessage('must be at most 200 characters long'),
   ];
 
   validations.push(
