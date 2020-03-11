@@ -28,6 +28,7 @@ router.get('/user/:user/rss', rss.listByUser);
 router.get('/user/:user', posts.listByUser);
 router.post('/category', jwtAuth, category.validate, wrap(category.create));
 router.get('/category', category.list);
+router.get('/category/:categoryName', category.fetchCategory);
 router.get('/retrieve', retrieve.get);
 router.param('comment', comments.load);
 router.post('/post/:post', jwtAuth, comments.validate, comments.create);

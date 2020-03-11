@@ -16,6 +16,12 @@ export const list = async (req, res) => {
   res.json(categories);
 };
 
+export const fetchCategory = async (req, res) => {
+  const name = req.params.categoryName;
+  const category = await Category.findOne({ name });
+  res.json(category);
+};
+
 export const validate = async (req, res, next) => {
   const validations = [
     body('name')
@@ -72,4 +78,5 @@ export default {
   create,
   list,
   validate,
+  fetchCategory
 };
