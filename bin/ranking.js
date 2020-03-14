@@ -53,37 +53,19 @@ function getRankedItems(callback) {
               "$score",
               { $multiply: ["$comments".length, 0.08] },
               { $multiply: ["$views", 0.002] },
-              { $multiply: ["$a.karma", 0.002] },
+              { $multiply: ["$a.karma", 0.001] },
               0.75
-            ] }, //end $add
+            ] }, 
             { $add: [
               1,
-              { $subtract: [
-                { $multiply: [ // this is a workaround for mongo version 3.0 (no $pow)
-                  { $multiply: [
-                    { $divide: [{ $subtract: [ new Date(), "$created" ] },14400000]},
-                    .4
-                  ] }, //end $multiply
-                  { $multiply: [
-                    { $divide: [{ $subtract: [ new Date(), "$created" ] },14400000]},
-                    .4
-                  ] } //end $multiply
-                ] }, //end $multiply
-                { $multiply: [ // this is a workaround for mongo version 3.0 (no $pow)
-                  { $multiply: [                    
-                    { $divide: [{ $subtract: [ new Date(), "$created" ] },14400000]},
-                    .3
-                  ] }, //end $multiply
-                  { $multiply: [
-                    { $divide: [{ $subtract: [ new Date(), "$created" ] },14400000]},
-                    .3
-                  ] } //end $multiply
-                ] } //end $multiply
-              ] } //end $subtract
-            ] } //end $add
-          ] } //end $divide
+              { $multiply: [
+                { $divide: [{ $subtract: [ new Date(), "$created" ] },14400000]},
+                .4
+              ] }, 
+            ] } 
+          ] } 
         }
-      }, //end $project
+      }, 
       { $sort: { ranking: -1 } },
       { $out: 'posts' },
     ],
@@ -95,6 +77,6 @@ function getRankedItems(callback) {
       console.log('ranked', results)
       process.exit(0);
     }
-  ); //end Items.aggregate
+  );
 }
 getRankedItems()
