@@ -53,7 +53,7 @@ function getRankedItems(callback) {
               "$score",
               { $multiply: ["$comments".length, 0.08] },
               { $multiply: ["$views", 0.002] },
-              { $multiply: ["$a.karma", 0.001] },
+              { $multiply: ["$a.karma", 0.0001] },
               0.75
             ] }, 
             { $add: [
