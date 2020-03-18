@@ -1,9 +1,12 @@
 import mongoose, { Schema } from 'mongoose';
+import User from '../models/user';
 
 const commentSchema = new Schema({
   author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   body: { type: String, required: true },
   created: { type: Date, default: Date.now },
+  score: { type: Number, default: 0 },
+  votes: [{ user: Schema.Types.ObjectId, vote: Number, _id: false }],
 });
 
 commentSchema.set('toJSON', { getters: true });
@@ -68,6 +71,35 @@ postSchema.methods.vote = function(user, vote) {
   }
 
   return this.save();
+};
+
+postSchema.methods.voteComment = async function(comment, user, vote) {
+  let post = await Post.findOne({ 'comments._id': comment }, { comments: { $elemMatch: { _id: comment } } });
+  let com = post.comments[0]
+  let exists = com.votes.find(o => o.user == user);
+  const index = com.votes.indexOf(exists);
+
+  if (exists) {
+    if (vote !== exists.vote) {
+      const u = await User.findOneAndUpdate({ '_id': com.author._id }, { $inc: { 'karma': vote }} );
+    }    
+    // reset score
+    com.score -= exists.vote;
+    // change vote
+    com.score += vote;
+    exists.vote = vote;
+    com.votes.splice(index, 1)
+    com.votes.push(exists);    
+
+  } else if (vote !== 0) {
+    // new vote
+    com.score += vote;
+    com.votes.push({ user, vote });
+    await User.findOneAndUpdate({ '_id': com.author._id }, { $inc: { 'karma': vote } });
+  }
+
+  await Post.updateOne({'_id': post._id, 'comments._id': com._id}, {$set: {'comments.$': com}});
+  return {score: com.score}
 };
 
 postSchema.methods.addComment = async function(author, body) {

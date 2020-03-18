@@ -9,12 +9,13 @@ export const load = async (req, res, next, id) => {
 };
 
 export const create = async (req, res) => {
-  const post = await req.post.addComment(req.user.id, req.body.comment);
+  let post = await req.post.addComment(req.user.id, req.body.comment);
+  await req.post.voteComment(post._id, req.user.id, 1);
   await User.findOneAndUpdate({ _id: req.user.id }, { $inc: { karma: 5 } });
   const fullPost = await Post.findById(req.post.id).populate('author');
   await User.findOneAndUpdate({ _id: fullPost.author.id }, { $inc: { karma: 10 } });
 
-  res.status(201).json(post.content);
+  res.status(201).json(fullPost);
 
   const users = req.post.author._id == req.user.id ? [] : [req.post.author._id];
 
@@ -65,9 +66,21 @@ export const validate = async (req, res, next) => {
   res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
 };
 
+export const upvote = async (req, res) => {
+  const comment = await req.post.voteComment(req.params.commentId, req.user.id, 1);
+  res.json(comment);
+};
+
+export const downvote = async (req, res) => {
+  const post = await req.post.voteComment(req.params.commentId, req.user.id, -1);
+  res.json(post);
+};
+
 export default {
   load,
   create,
   destroy,
   validate,
+  upvote,
+  downvote,
 };
