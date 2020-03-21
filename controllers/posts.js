@@ -23,33 +23,64 @@ export const show = async (req, res) => {
 };
 
 export const list = async (req, res) => {
-  const { sort = '-created' } = req.query;
-  const posts = await Post.find()
-    .populate('category')
-    .sort(sort)
-    .limit(100);
+  let posts
+  let search = {}
+  let skip = req.query.page > 1 ? req.query.page * 15 : 0;
 
-  res.json(posts);
-};
+  if (typeof req.params.category !== 'undefined') {
+    const name = req.params.category;
+    let category = await Category.find({ name });
+    search = category[0] != undefined ? { category: category[0]._id } : {};
+  }
 
-export const listByCategory = async (req, res) => {
-  // const cutoff = Date.now() - 86400 * 14 * 1000;
-  const { sort = '-score' } = req.query;
-  const name = req.params.category;
-  const category = await Category.find({ name });
-  const posts = await Post.find({ category })
-    .sort(sort)
-    .limit(100);
-  res.json(posts);
-};
+  if (typeof req.params.user !== 'undefined') {
+    const username = req.params.user;
+    const author = await User.findOne({ username });
+    search = author != undefined ? { author: author._id } : {};
+  }
 
-export const listByUser = async (req, res) => {
-  const { sort = '-score' } = req.query;
-  const username = req.params.user;
-  const author = await User.findOne({ username });
-  const posts = await Post.find({ author: author.id })
-    .sort(sort)
-    .limit(100);
+  if (req.query.sort != 'comments') {
+    const { sort = '-created' } = req.query;
+    posts = await Post.find(search)
+      .populate('category')
+      .sort(sort)
+      .skip(skip)
+      .limit(15);
+  } else {
+
+    posts = await Post.aggregate([
+      { $match: search },
+      {
+        $lookup: {
+            from: "users",
+            localField: "author",
+            foreignField: "_id",
+            as: "author"
+        }
+      },
+      {
+        $unwind: '$author'
+      },
+      { $unset: "author.password" },
+      {
+        $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category"
+        }
+      },
+      {
+        $unwind: '$category'
+      },
+      {
+        $addFields: { comments_count: {$size: { "$ifNull": [ "$comments", [] ] } }}
+      }, 
+      { $sort: { "comments_count": -1 } },
+      { $skip: skip},
+      { $limit: 15},
+    ])
+  }
   res.json(posts);
 };
 
@@ -162,8 +193,6 @@ export default {
   load,
   show,
   list,
-  listByCategory,
-  listByUser,
   create,
   validate,
   upvote,
