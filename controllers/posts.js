@@ -25,7 +25,7 @@ export const show = async (req, res) => {
 export const list = async (req, res) => {
   let posts
   let search = {}
-  let skip = req.query.page > 1 ? req.query.page * 15 : 0;
+  let skip = req.query.page > 0 ? req.query.page * 15 : 0;
 
   if (typeof req.params.category !== 'undefined') {
     const name = req.params.category;
@@ -81,7 +81,9 @@ export const list = async (req, res) => {
       { $limit: 15},
     ])
   }
-  res.json(posts);
+  const count = await Post.countDocuments(search);
+  const more = count > (skip * 2) && count > 15 ? true : false;
+  res.json({ posts, more });
 };
 
 export const create = async (req, res, next) => {
