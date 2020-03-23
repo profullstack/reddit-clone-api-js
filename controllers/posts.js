@@ -79,6 +79,7 @@ export const list = async (req, res) => {
       {
         $addFields: { id: '$_id' }
       },
+      { $unset: "_id" },
       { $sort: { "comments_count": -1 } },
       { $skip: skip},
       { $limit: 15},
