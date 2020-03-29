@@ -23,6 +23,9 @@ export const listByCategory = async (req, res) => {
     language: 'en',
     pubDate: new Date(),
     ttl: '60',
+    custom_namespaces: {
+      media: 'http://search.yahoo.com/mrss/',
+    },
   });
 
   posts.map(item => {
@@ -30,7 +33,16 @@ export const listByCategory = async (req, res) => {
     const categories = [category.name];
     const author = item.author.username;
     const url = `https://upvotocracy.com/a/${category.name}/${item._id}`;
-
+    const image_custom_element = {
+      'media:content': [
+        {
+          _attr: {
+            url: item.thumb,
+            medium: 'image',
+          },
+        },
+      ],
+    };
     feed.item({
       title,
       url, // link to the item
@@ -39,6 +51,7 @@ export const listByCategory = async (req, res) => {
       author, // optional - defaults to feed author property
       date: item.created, // any format that js Date can parse.
       description: text || '',
+      custom_elements: [image_custom_element], // any format that js Date can parse.
     });
   });
 
@@ -65,6 +78,9 @@ export const list = async (req, res) => {
     language: 'en',
     pubDate: new Date(),
     ttl: '60',
+    custom_namespaces: {
+      media: 'http://search.yahoo.com/mrss/',
+    },
   });
 
   posts.map(item => {
@@ -72,7 +88,16 @@ export const list = async (req, res) => {
     const categories = [category.name];
     const author = item.author.username;
     const url = `https://upvotocracy.com/a/${category.name}/${item._id}`;
-
+    const image_custom_element = {
+      'media:content': [
+        {
+          _attr: {
+            url: item.thumb,
+            medium: 'image',
+          },
+        },
+      ],
+    };
     feed.item({
       title,
       url, // link to the item
@@ -80,6 +105,7 @@ export const list = async (req, res) => {
       categories, // optional - array of item categories
       author, // optional - defaults to feed author property
       date: item.created, // any format that js Date can parse.
+      custom_elements: [image_custom_element], // any format that js Date can parse.
     });
   });
 
@@ -107,6 +133,9 @@ export const listByUser = async (req, res) => {
     language: 'en',
     pubDate: new Date(),
     ttl: '60',
+    custom_namespaces: {
+      media: 'http://search.yahoo.com/mrss/',
+    },
   });
 
   posts.map(item => {
@@ -114,6 +143,18 @@ export const listByUser = async (req, res) => {
     const categories = [category.name];
     const author = item.author.username;
     const url = `https://upvotocracy.com/a/${category.name}/${item._id}`;
+    // console.log(item);
+
+    const image_custom_element = {
+      'media:content': [
+        {
+          _attr: {
+            url: item.thumb,
+            medium: 'image',
+          },
+        },
+      ],
+    };
 
     feed.item({
       title,
@@ -121,7 +162,8 @@ export const listByUser = async (req, res) => {
       guid: item.id, // optional - defaults to url
       categories, // optional - array of item categories
       author, // optional - defaults to feed author property
-      date: item.created, // any format that js Date can parse.
+      date: item.created,
+      custom_elements: [image_custom_element], // any format that js Date can parse.
     });
   });
 
