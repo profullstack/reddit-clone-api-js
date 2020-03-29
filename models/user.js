@@ -7,12 +7,15 @@ const userSchema = new Schema(
     password: { type: String, required: true },
     admin: Boolean,
     karma: { type: Number, default: 0, index: true },
-    inbox: [
-      {
-        comment: Schema.Types.ObjectId,
-        read: Boolean,
-      },
-    ],
+    inbox: {
+      type: [
+        {
+          comment: Schema.Types.ObjectId,
+          read: Boolean,
+        },
+      ],
+      select: false,
+    },
     created: { type: Date },
     ip: { type: String },
   },

@@ -87,7 +87,7 @@ export const getByUsername = async (req, res) => {
 
 export const inbox = async (req, res) => {
   let comments = [];
-  const user = await User.findOne({ _id: req.user.id });
+  const user = await User.findOne({ _id: req.user.id }).select('inbox');
 
   for (let i = 0; i < user.inbox.length; i += 1) {
     const post = await Post.findOne(
@@ -129,7 +129,7 @@ export const deleteInbox = async (req, res) => {
 };
 
 export const inboxCount = async (req, res) => {
-  const user = await User.findOne({ _id: req.user.id });
+  const user = await User.findOne({ _id: req.user.id }).select('inbox');
   const count = user.inbox.length;
   res.json({ count });
 };
