@@ -134,6 +134,47 @@ export const inboxCount = async (req, res) => {
   res.json({ count });
 };
 
+export const getMe = async (req, res) => {
+  const user = await User.findOne({ username: req.body.username });
+  res.json(user);
+}
+
+export const updateBitcoinAddress = async (req, res) => {
+  await User.findOneAndUpdate(
+    {username: req.body.username},
+    {bitcoinAddress: req.body.bitcoinaddress}, 
+    {upsert: true}
+  )
+  .catch(err => {
+    console.log(err);
+    res.status(500).send();
+  });
+  res.status(201).send();
+}
+
+export const getBitcoinAddress = async (req, res) => {
+  const user = await User.findOne({ username: req.body.username });
+  res.send(user.bitcoinAddress)
+}
+
+export const getLinks = async (req, res) => {
+  const user = await User.findOne({ username: req.body.username });
+  res.json(user.links);
+}
+
+export const updateLinks = async  (req, res) => {
+  await User.findOneAndUpdate(
+    {username: req.body.username}, 
+    {links: JSON.parse(req.body.socialLinks)},
+    {upsert: true}
+  )
+  .catch(err => {
+    console.log(err);
+    res.status(500).send();
+  });
+  res.status(201).send();
+}
+
 export default {
   login,
   register,
@@ -143,4 +184,9 @@ export default {
   inboxCount,
   getAll,
   getByUsername,
+  getMe,
+  getLinks,
+  getBitcoinAddress,
+  updateLinks,
+  updateBitcoinAddress,
 };
