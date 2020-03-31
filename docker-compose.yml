@@ -26,6 +26,13 @@ services:
       - "28016:27017"
     networks:
       - upvotocracy-network
+  redis:
+    image: redis
+    container_name: upvotocracy-cache
+    ports:
+      - "6381:6379"
+    networks:
+      - upvotocracy-network
 networks:
   upvotocracy-network:
     driver: bridge

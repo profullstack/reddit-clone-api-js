@@ -1,8 +1,8 @@
 import RSS from 'rss';
+import { j2xParser as Parser } from 'fast-xml-parser';
 import Post from '../models/post';
 import Category from '../models/category';
 import User from '../models/user';
-
 export const listByCategory = async (req, res) => {
   // const cutoff = Date.now() - 86400 * 14 * 1000;
   const { sort = '-created' } = req.query;
@@ -114,6 +114,50 @@ export const list = async (req, res) => {
   res.send(xml);
 };
 
+export const sitemap = async (req, res) => {
+  const defaultOptions = {
+    format: true,
+    ignoreAttributes: false,
+    attrNodeName: '@_',
+    attributeNamePrefix: '@_',
+    parseAttributeValue: true,
+    doctype: '<?xml version="1.0" encoding="UTF-8"?>',
+  };
+  const parser = new Parser(defaultOptions);
+  const { sort = '-created' } = req.query;
+  const posts = await Post.find()
+    .populate('author')
+    .populate('category')
+    .sort(sort);
+
+  const pages = [];
+  const doc = {
+    urlset: {},
+  };
+
+  posts.map(item => {
+    const { title, category } = item;
+    const url = `https://upvotocracy.com/a/${category.name}/${item._id}`;
+
+    pages.push({
+      loc: url,
+      changefreq: 'weekly',
+      priority: 0.5,
+    });
+  });
+
+  doc.urlset['@_'] = {
+    xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9',
+  };
+  doc.urlset.url = pages;
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+${parser.parse(doc)}
+`;
+
+  res.send(xml);
+};
+
 export const listByUser = async (req, res) => {
   // const cutoff = Date.now() - 86400 * 14 * 1000;
   const { sort = '-score' } = req.query;
@@ -176,4 +220,5 @@ export default {
   list,
   listByCategory,
   listByUser,
+  sitemap,
 };

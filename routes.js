@@ -16,6 +16,7 @@ router.post('/register', users.validate, wrap(users.register));
 router.param('post', posts.load);
 router.get('/posts', posts.list);
 router.get('/posts/rss', rss.list);
+router.get('/sitemap.xml', rss.sitemap);
 router.get('/posts/:category', posts.list);
 router.get('/posts/:category/rss', rss.listByCategory);
 router.get('/post/:post', posts.show);
