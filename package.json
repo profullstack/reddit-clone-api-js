@@ -6,7 +6,7 @@
     "deploy": "npm run set:prod && ./bin/deploy.sh",
     "set:dev": "rm -f .env && ln -s .env.dev .env",
     "set:prod": "rm -f .env && ln -s .env.prod .env",
-    "start": "npx pm2-runtime processes.json --watch",
+    "start": "npx pm2-runtime processes.json",
     "dev": "npm run set:dev && docker-compose up --build",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "lint": "npx eslint .",
