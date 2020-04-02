@@ -23,13 +23,6 @@ const userSchema = new Schema(
         url: String
       }
     ],
-    bitcoinAddress: {type: String},
-    links: [
-      {
-        name: String,
-        url: String
-      }
-    ],
     created: { type: Date },
     ip: { type: String },
   },
