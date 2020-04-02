@@ -41,6 +41,11 @@ router.get('/inbox', jwtAuth, users.inbox);
 router.delete('/inbox/:id', jwtAuth, users.deleteInbox);
 router.get('/inbox/count', jwtAuth, users.inboxCount);
 router.get('/leaderboard', users.getAll);
+router.get('/me', users.getMe),
+router.post('/me/links', jwtAuth, wrap(users.updateLinks));
+router.post('/me/bitcoinaddress',  jwtAuth, wrap(users.updateBitcoinAddress))
+router.get('/me/links', jwtAuth, users.getLinks);
+router.get('/me/bitcoinaddress', jwtAuth, users.getBitcoinAddress);
 
 router.use('*', (req, res) => res.status(404).json({ message: 'not found' }));
 router.use((err, req, res, next) => res.status(500).json({ errors: err.message }));
