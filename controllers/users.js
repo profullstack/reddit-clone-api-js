@@ -165,7 +165,7 @@ export const getLinks = async (req, res) => {
 export const updateLinks = async  (req, res) => {
   await User.findOneAndUpdate(
     {username: req.body.username}, 
-    {links: JSON.parse(req.body.socialLinks)},
+    {links: req.body.socialLinks},
     {upsert: true}
   )
   .catch(err => {

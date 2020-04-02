@@ -41,7 +41,7 @@ router.get('/inbox', jwtAuth, users.inbox);
 router.delete('/inbox/:id', jwtAuth, users.deleteInbox);
 router.get('/inbox/count', jwtAuth, users.inboxCount);
 router.get('/leaderboard', users.getAll);
-router.get('/me', jwtAuth, users.getMe),
+router.get('/me', users.getMe),
 router.post('/me/links', jwtAuth, wrap(users.updateLinks));
 router.post('/me/bitcoinaddress',  jwtAuth, wrap(users.updateBitcoinAddress))
 router.get('/me/links', jwtAuth, users.getLinks);
