@@ -135,13 +135,13 @@ export const inboxCount = async (req, res) => {
 };
 
 export const getMe = async (req, res) => {
-  const user = await User.findOne({ username: req.body.username });
+  const user = await User.findOne({ username: req.user.username });
   res.json(user);
 }
 
 export const updateBitcoinAddress = async (req, res) => {
   await User.findOneAndUpdate(
-    {username: req.body.username},
+    {username: req.user.username},
     {bitcoinAddress: req.body.bitcoinaddress}, 
     {upsert: true}
   )
@@ -153,18 +153,18 @@ export const updateBitcoinAddress = async (req, res) => {
 }
 
 export const getBitcoinAddress = async (req, res) => {
-  const user = await User.findOne({ username: req.body.username });
+  const user = await User.findOne({ username: req.user.username });
   res.send(user.bitcoinAddress)
 }
 
 export const getLinks = async (req, res) => {
-  const user = await User.findOne({ username: req.body.username });
+  const user = await User.findOne({ username: req.user.username });
   res.json(user.links);
 }
 
 export const updateLinks = async  (req, res) => {
   await User.findOneAndUpdate(
-    {username: req.body.username}, 
+    {username: req.user.username}, 
     {links: req.body.socialLinks},
     {upsert: true}
   )
