@@ -16,6 +16,7 @@ router.post('/register', users.validate, wrap(users.register));
 router.param('post', posts.load);
 router.get('/posts', posts.list);
 router.get('/posts/rss', rss.list);
+router.get('/posts/rss/:user', rss.listBySubscriptions);
 router.get('/sitemap.xml', rss.sitemap);
 router.get('/posts/:category', posts.list);
 router.get('/posts/:category/rss', rss.listByCategory);
@@ -46,6 +47,9 @@ router.post('/me/links', jwtAuth, wrap(users.updateLinks));
 router.post('/me/bitcoinaddress', jwtAuth, wrap(users.updateBitcoinAddress))
 // router.get('/me/links', jwtAuth, users.getLinks);
 // router.get('/me/bitcoinaddress', jwtAuth, users.getBitcoinAddress);
+router.get('/subscriptions', jwtAuth, posts.list);
+router.post('/me/subscriptions/:id', jwtAuth, users.addSubscription);
+router.delete('/me/subscriptions/:id', jwtAuth, users.removeSubscription);
 
 router.use('*', (req, res) => res.status(404).json({ message: 'not found' }));
 router.use((err, req, res, next) => res.status(500).json({ errors: err.message }));

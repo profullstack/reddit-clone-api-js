@@ -174,6 +174,18 @@ export const updateLinks = async (req, res) => {
   res.status(201).send();
 };
 
+export const addSubscription = async (req, res) => {
+  await User.findOneAndUpdate({_id: req.user.id}, {$push: {subscriptions: req.params.id}})
+    .catch(err => res.status(500).send())
+  res.status(201).send();
+};
+
+export const removeSubscription = async (req, res) => {
+  await User.findOneAndUpdate({_id: req.user.id}, {$pull: {subscriptions: req.params.id}})
+    .catch(err => res.status(500).send())
+  res.status(200).send();
+};
+
 export default {
   login,
   register,
@@ -188,4 +200,6 @@ export default {
   getBitcoinAddress,
   updateLinks,
   updateBitcoinAddress,
+  addSubscription,
+  removeSubscription,
 };
