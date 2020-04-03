@@ -135,45 +135,44 @@ export const inboxCount = async (req, res) => {
 };
 
 export const getMe = async (req, res) => {
-  const user = await User.findOne({ username: req.body.username });
+  const user = await User.findOne({ _id: req.user.id }).catch(console.error);
+
   res.json(user);
-}
+};
 
 export const updateBitcoinAddress = async (req, res) => {
   await User.findOneAndUpdate(
-    {username: req.body.username},
-    {bitcoinAddress: req.body.bitcoinaddress}, 
-    {upsert: true}
-  )
-  .catch(err => {
+    { _id: req.user.id },
+    { bitcoinAddress: req.body.bitcoinaddress },
+    { upsert: true },
+  ).catch(err => {
     console.log(err);
     res.status(500).send();
   });
   res.status(201).send();
-}
+};
 
 export const getBitcoinAddress = async (req, res) => {
   const user = await User.findOne({ username: req.body.username });
-  res.send(user.bitcoinAddress)
-}
+  res.send(user.bitcoinAddress);
+};
 
 export const getLinks = async (req, res) => {
   const user = await User.findOne({ username: req.body.username });
   res.json(user.links);
-}
+};
 
-export const updateLinks = async  (req, res) => {
+export const updateLinks = async (req, res) => {
   await User.findOneAndUpdate(
-    {username: req.body.username}, 
-    {links: req.body.socialLinks},
-    {upsert: true}
-  )
-  .catch(err => {
+    { _id: req.user.id },
+    { links: req.body.socialLinks },
+    { upsert: true },
+  ).catch(err => {
     console.log(err);
     res.status(500).send();
   });
   res.status(201).send();
-}
+};
 
 export default {
   login,
