@@ -16,16 +16,21 @@ const userSchema = new Schema(
       ],
       select: false,
     },
-    bitcoinAddress: {type: String},
+    bitcoinAddress: { type: String },
     links: [
       {
         name: String,
-        url: String
-      }
+        url: String,
+      },
     ],
     created: { type: Date },
     ip: { type: String },
-    subscriptions: [ Schema.Types.ObjectId ],
+    subscriptions: [
+      {
+        type: Schema.Types.ObjectId,
+        default: [],
+      },
+    ],
   },
   { collation: { locale: 'en', strength: 1 } },
 );

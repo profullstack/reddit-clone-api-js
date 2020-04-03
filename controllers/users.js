@@ -3,8 +3,12 @@ import { localAuth, createAuthToken } from '../auth';
 import User from '../models/user';
 import Post from '../models/post';
 
-export const login = (req, res, next) => {
-  localAuth(req, res, next);
+export const login = async (req, res, next) => {
+  let { user, token } = await localAuth(req, res, next);
+  console.log(user);
+  const fullUser = await User.findOne({ _id: user.id }).catch(console.error);
+
+  res.send({ user: fullUser, token });
 };
 
 export const getAll = async (req, res) => {
@@ -175,14 +179,18 @@ export const updateLinks = async (req, res) => {
 };
 
 export const addSubscription = async (req, res) => {
-  await User.findOneAndUpdate({_id: req.user.id}, {$push: {subscriptions: req.params.id}})
-    .catch(err => res.status(500).send())
+  await User.findOneAndUpdate(
+    { _id: req.user.id },
+    { $push: { subscriptions: req.params.id } },
+  ).catch(err => res.status(500).send());
   res.status(201).send();
 };
 
 export const removeSubscription = async (req, res) => {
-  await User.findOneAndUpdate({_id: req.user.id}, {$pull: {subscriptions: req.params.id}})
-    .catch(err => res.status(500).send())
+  await User.findOneAndUpdate(
+    { _id: req.user.id },
+    { $pull: { subscriptions: req.params.id } },
+  ).catch(err => res.status(500).send());
   res.status(200).send();
 };
 
