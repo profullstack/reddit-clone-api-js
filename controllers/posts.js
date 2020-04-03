@@ -27,16 +27,23 @@ export const list = async (req, res) => {
   let search = {};
   let skip = req.query.page > 0 ? req.query.page * 15 : 0;
 
-  if (typeof req.params.category !== 'undefined') {
-    const name = req.params.category;
-    let category = await Category.find({ name });
-    search = category[0] != undefined ? { category: category[0]._id } : {};
+  if (typeof req.user != 'undefined') {
+    const user = await User.findOne({_id: req.user.id}, {'_id': false, 'subscriptions': true})
+    const subscriptions = user.subscriptions
+    search = { category: { $in: subscriptions }}
   }
+  else {
+    if (typeof req.params.category !== 'undefined') {
+      const name = req.params.category;
+      let category = await Category.find({ name });
+      search = category[0] != undefined ? { category: category[0]._id } : {};
+    }
 
-  if (typeof req.params.user !== 'undefined') {
-    const username = req.params.user;
-    const author = await User.findOne({ username });
-    search = author != undefined ? { author: author._id } : {};
+    if (typeof req.params.user !== 'undefined') {
+      const username = req.params.user;
+      const author = await User.findOne({ username });
+      search = author != undefined ? { author: author._id } : {};
+    }
   }
 
   if (req.query.sort != 'comments') {

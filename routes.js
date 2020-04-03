@@ -46,6 +46,7 @@ router.post('/me/links', jwtAuth, wrap(users.updateLinks));
 router.post('/me/bitcoinaddress', jwtAuth, wrap(users.updateBitcoinAddress))
 // router.get('/me/links', jwtAuth, users.getLinks);
 // router.get('/me/bitcoinaddress', jwtAuth, users.getBitcoinAddress);
+router.get('/subscriptions', jwtAuth, posts.list);
 router.post('/me/subscriptions/:id', jwtAuth, users.addSubscription);
 router.delete('/me/subscriptions/:id', jwtAuth, users.removeSubscription);
 
