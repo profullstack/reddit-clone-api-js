@@ -25,6 +25,7 @@ const userSchema = new Schema(
     ],
     created: { type: Date },
     ip: { type: String },
+    subscriptions: [ Schema.Types.ObjectId ],
   },
   { collation: { locale: 'en', strength: 1 } },
 );
