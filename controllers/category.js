@@ -1,6 +1,7 @@
 import { body, validationResult } from 'express-validator';
 import Category from '../models/category';
 import User from '../models/user';
+import { cache, getAsync, setAsync } from '../cache';
 
 export const create = async (req, res, next) => {
   const { name, description } = req.body;
@@ -8,11 +9,24 @@ export const create = async (req, res, next) => {
   const category = await Category.create({ name, description, owner });
   await User.findOneAndUpdate({ _id: req.user.id }, { $inc: { karma: 10 } });
 
+  cache.del('/categories');
   res.status(201).json(category);
 };
 
 export const list = async (req, res) => {
+  const cached = await getAsync('/categories').catch(console.error);
+
+  if (cached) {
+    console.log('categories cached');
+    res.json(JSON.parse(cached));
+    return;
+  }
+
   const categories = await Category.find();
+  const cacheRes = await setAsync('/categories', JSON.stringify(categories)).catch(console.error);
+  cache.expire('/categories', 60);
+  console.log('categories cache set');
+
   res.json(categories);
 };
 
