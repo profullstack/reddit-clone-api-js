@@ -2,6 +2,7 @@ import { body, validationResult } from 'express-validator';
 import { localAuth, createAuthToken } from '../auth';
 import User from '../models/user';
 import Post from '../models/post';
+import Category from '../models/category';
 
 export const login = async (req, res, next) => {
   let { user, token } = await localAuth(req, res, next);
@@ -179,19 +180,41 @@ export const updateLinks = async (req, res) => {
 };
 
 export const addSubscription = async (req, res) => {
-  await User.findOneAndUpdate(
-    { _id: req.user.id },
-    { $push: { subscriptions: req.params.id } },
-  ).catch(err => res.status(500).send());
-  res.status(201).send();
+  const user = await User.findOne({ subscriptions: req.params.id })
+
+  if (user == null) {
+    await User.findOneAndUpdate(
+      { _id: req.user.id },
+      { $push: { subscriptions: req.params.id } },
+    ).catch(err => res.status(500).send());
+
+    await Category.findOneAndUpdate(
+      { _id: req.params.id},
+      { $inc: { subscriberCount: 1 }},
+    ).catch(err => res.status(500).send());
+
+    res.status(201).send();
+  }
+  res.status(400).send();
 };
 
 export const removeSubscription = async (req, res) => {
-  await User.findOneAndUpdate(
-    { _id: req.user.id },
-    { $pull: { subscriptions: req.params.id } },
-  ).catch(err => res.status(500).send());
-  res.status(200).send();
+  const user = await User.findOne({ subscriptions: req.params.id })
+
+  if (user != null) {
+    await User.findOneAndUpdate(
+      { _id: req.user.id },
+      { $pull: { subscriptions: req.params.id } },
+    ).catch(err => res.status(500).send());
+
+    await Category.findOneAndUpdate(
+      { _id: req.params.id},
+      { $inc: { subscriberCount: -1 }},
+    ).catch(err => res.status(500).send());
+    
+    res.status(200).send();
+  }
+  res.status(400).send();
 };
 
 export default {
