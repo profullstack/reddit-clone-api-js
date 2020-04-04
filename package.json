@@ -10,7 +10,8 @@
     "dev": "npm run set:dev && docker-compose up --build",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "lint": "npx eslint .",
-    "rank": "node -r esm ./bin/ranking.js"
+    "rank": "node -r esm ./bin/ranking.js",
+    "cleanup": "node -r esm ./bin/cleanup.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
