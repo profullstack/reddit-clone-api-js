@@ -180,41 +180,47 @@ export const updateLinks = async (req, res) => {
 };
 
 export const addSubscription = async (req, res) => {
-  const user = await User.findOne({ subscriptions: req.params.id })
+  const user = await User.findOne({ _id: req.user.id, subscriptions: req.params.id })
+    .catch(err => res.status(500).send(err.message));
 
   if (user == null) {
     await User.findOneAndUpdate(
       { _id: req.user.id },
       { $push: { subscriptions: req.params.id } },
-    ).catch(err => res.status(500).send());
+    ).catch(err => res.status(500).send(err.message));
 
     await Category.findOneAndUpdate(
       { _id: req.params.id},
       { $inc: { subscriberCount: 1 }},
-    ).catch(err => res.status(500).send());
+    ).catch(err => res.status(500).send(err.message));
 
     res.status(201).send();
   }
-  res.status(400).send();
+  else {
+    res.status(400).send('already subscribed');
+  }
 };
 
 export const removeSubscription = async (req, res) => {
-  const user = await User.findOne({ subscriptions: req.params.id })
+  const user = await User.findOne({ _id: req.user.id, subscriptions: req.params.id })
+    .catch(err => res.status(500).send(err.message));
 
   if (user != null) {
     await User.findOneAndUpdate(
       { _id: req.user.id },
       { $pull: { subscriptions: req.params.id } },
-    ).catch(err => res.status(500).send());
+    ).catch(err => res.status(500).send(err.message));
 
     await Category.findOneAndUpdate(
-      { _id: req.params.id},
+      { _id: req.params.id, subscriberCount: {$gt: 0 }},
       { $inc: { subscriberCount: -1 }},
-    ).catch(err => res.status(500).send());
-    
+    ).catch(err => res.status(500).send(err.message));
+
     res.status(200).send();
   }
-  res.status(400).send();
+  else {
+    res.status(400).send('not subscribed');
+  }
 };
 
 export default {
