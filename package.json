@@ -11,7 +11,8 @@
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "lint": "npx eslint .",
     "rank": "node -r esm ./bin/ranking.js",
-    "cleanup": "node -r esm ./bin/cleanup.js"
+    "cleanup": "node -r esm ./bin/cleanup.js",
+    "docker:cleanup": "docker container exec -it upvotocracy-api npm run cleanup"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
