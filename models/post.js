@@ -30,6 +30,7 @@ const postSchema = new Schema({
   type: { type: String, default: 'link', required: true },
   text: { type: String },
   ranking: { type: Number, default: 1, index: true },
+  sponsored: { type: Boolean, default: false },
 });
 
 postSchema.set('toJSON', { getters: true, virtuals: true });
