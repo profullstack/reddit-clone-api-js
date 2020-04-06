@@ -24,32 +24,32 @@ export const show = async (req, res) => {
 
 export const list = async (req, res) => {
   let posts;
-  let search = {};
+  let search = { sponsored: false };
   let skip = req.query.page > 0 ? req.query.page * 15 : 0;
 
   if (typeof req.user != 'undefined') {
     const user = await User.findOne({_id: req.user.id}, {'_id': false, 'subscriptions': true})
     const subscriptions = user.subscriptions
-    search = { category: { $in: subscriptions }}
+    search.category = { $in: subscriptions };
   }
   else {
     if (typeof req.params.category !== 'undefined') {
       const name = req.params.category;
       let category = await Category.find({ name });
-      search = category[0] != undefined ? { category: category[0]._id } : {};
+      search.category = category[0] != undefined ? category[0]._id : null;
     }
 
     if (typeof req.params.user !== 'undefined') {
       const username = req.params.user;
       const author = await User.findOne({ username });
-      search = author != undefined ? { author: author._id } : {};
+      search.author = author != undefined ? author._id : null;
     }
   }
 
   if (req.query.sort != 'comments') {
     const prefix = req.query.sort.slice(0, 1)
     const key = req.query.sort.slice(1)
-    const sort = { sponsored: -1, [key]: parseInt(`${prefix}1`) }
+    const sort = { [key]: parseInt(`${prefix}1`) }
     
     posts = await Post.find(search)
       .populate('category')
@@ -89,11 +89,48 @@ export const list = async (req, res) => {
         $addFields: { id: '$_id' },
       },
       { $unset: '_id' },
-      { $sort: { sponsored: -1, comments_count: -1 } },
+      { $sort: { comments_count: -1 } },
       { $skip: skip },
       { $limit: 15 },
     ]);
   }
+
+  search.sponsored = true;
+
+  let sponsored = await Post.aggregate([
+    { $match : search },
+    { $sample : { size: 1 } },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'author',
+        foreignField: '_id',
+        as: 'author',
+      },
+    },
+    {
+      $unwind: '$author',
+    },
+    { $unset: 'author.password' },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'category',
+      },
+    },
+    {
+      $unwind: '$category',
+    },
+    {
+      $addFields: { id: '$_id' },
+    },
+    { $unset: '_id' },
+  ]);
+  if (typeof sponsored[0] !== 'undefined') posts.splice(Math.random() * posts.length, 0, sponsored[0]);
+
+  delete search.sponsored;
   const count = await Post.countDocuments(search);
   const more = count > skip * 2 && count > 15 ? true : false;
   res.json({ posts, more });
