@@ -47,6 +47,7 @@ function getRankedItems(callback) {
         views: "$views",
         type: "$type",
         text: "$text",
+        sponsored: "$sponsored",
         ranking: { 
           $divide: [
             { $add: [
