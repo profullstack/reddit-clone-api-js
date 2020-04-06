@@ -11,7 +11,6 @@ services:
     links:
       - mongo
     volumes:
-      - ./src:/usr/src/app/src
       - ./index.js:/usr/src/app/index.js
       - ./.env:/usr/src/app/.env
     networks:
