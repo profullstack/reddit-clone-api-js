@@ -47,7 +47,10 @@ export const list = async (req, res) => {
   }
 
   if (req.query.sort != 'comments') {
-    const { sort = '-created' } = req.query;
+    const prefix = req.query.sort.slice(0, 1)
+    const key = req.query.sort.slice(1)
+    const sort = { sponsored: -1, [key]: parseInt(`${prefix}1`) }
+    
     posts = await Post.find(search)
       .populate('category')
       .sort(sort)
@@ -86,7 +89,7 @@ export const list = async (req, res) => {
         $addFields: { id: '$_id' },
       },
       { $unset: '_id' },
-      { $sort: { comments_count: -1 } },
+      { $sort: { sponsored: -1, comments_count: -1 } },
       { $skip: skip },
       { $limit: 15 },
     ]);
