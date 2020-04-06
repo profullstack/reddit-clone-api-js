@@ -1,6 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 import Category from '../models/category';
+import Posts from '../models/post';
 
 mongoose.connect(process.env.MONGO_URI, {
   keepAlive: true,
@@ -15,5 +16,11 @@ mongoose.connect(process.env.MONGO_URI, {
     .catch(err => console.log(err));
 
   console.log(res)
+
+  const sponsored = await Posts.updateMany({ sponsored: { $exists: false } }, { sponsored: false })
+    .catch(err => console.log(err));
+  
+  console.log({ sponsored })
+
   process.exit()
 })();
