@@ -2,6 +2,7 @@ import { body, validationResult } from 'express-validator';
 import Post from '../models/post';
 import User from '../models/user';
 import Category from '../models/category';
+import { cache, getAsync, setAsync } from '../cache';
 
 export const load = async (req, res, next, id) => {
   try {
