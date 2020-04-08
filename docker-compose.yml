@@ -1,4 +1,4 @@
-version: "3"
+version: "3.5"
 services:
   api:
     container_name: upvotocracy-api
@@ -34,6 +34,6 @@ services:
       - upvotocracy-network
 networks:
   upvotocracy-network:
-    driver: bridge
+    name: upvotocracy-network
 volumes:
   mongo_data: {}
