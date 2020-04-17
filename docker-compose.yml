@@ -17,6 +17,7 @@ services:
       - upvotocracy-network
   mongo:
     container_name: upvotocracy-mongo
+    restart: always
     image: mongo:latest
     env_file: .env
     volumes:
@@ -27,6 +28,7 @@ services:
       - upvotocracy-network
   redis:
     image: redis
+    restart: always
     container_name: upvotocracy-cache
     ports:
       - "6381:6379"
