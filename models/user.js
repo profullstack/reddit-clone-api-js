@@ -46,7 +46,7 @@ userSchema.options.toJSON.transform = (doc, ret) => {
   return obj;
 };
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, 10);
   if (!this.created) {
     this.created = Date.now();
@@ -54,7 +54,7 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-userSchema.methods.isValidPassword = async function(password) {
+userSchema.methods.isValidPassword = async function (password) {
   const match = await bcrypt.compare(password, this.password);
   return match;
 };

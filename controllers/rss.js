@@ -3,6 +3,7 @@ import { j2xParser as Parser } from 'fast-xml-parser';
 import Post from '../models/post';
 import Category from '../models/category';
 import User from '../models/user';
+
 export const listByCategory = async (req, res) => {
   // const cutoff = Date.now() - 86400 * 14 * 1000;
   const { sort = '-created' } = req.query;
@@ -218,15 +219,15 @@ export const listByUser = async (req, res) => {
 
 export const listBySubscriptions = async (req, res) => {
   const { sort = '-created' } = req.query;
-  const user = await User.findOne({ _id: req.params.user }, {'_id': false, 'subscriptions': true})
-  console.log(user)
+  const user = await User.findOne({ _id: req.params.user }, { _id: false, subscriptions: true });
+  console.log(user);
   const posts = await Post.find({ category: { $in: user.subscriptions } })
     .populate('author')
     .populate('category')
     .sort(sort)
     .limit(20);
   const feed = new RSS({
-    title: `upvotocracy.com RSS feed`,
+    title: 'upvotocracy.com RSS feed',
     description: 'Zero moderation Reddit clone',
     feed_url: `https://upvotocracy.com/api/1/posts/rss/${req.params.user}`,
     site_url: 'https://upvotocracy.com',
@@ -240,7 +241,7 @@ export const listBySubscriptions = async (req, res) => {
     },
   });
 
-  console.log(posts)
+  console.log(posts);
 
   posts.map(item => {
     const { title, category, text } = item;

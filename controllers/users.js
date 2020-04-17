@@ -5,7 +5,7 @@ import Post from '../models/post';
 import Category from '../models/category';
 
 export const login = async (req, res, next) => {
-  let { user, token } = await localAuth(req, res, next);
+  const { user, token } = await localAuth(req, res, next);
   console.log(user);
   const fullUser = await User.findOne({ _id: user.id }).catch(console.error);
 
@@ -190,13 +190,12 @@ export const addSubscription = async (req, res) => {
     ).catch(err => res.status(500).send(err.message));
 
     await Category.findOneAndUpdate(
-      { _id: req.params.id},
-      { $inc: { subscriberCount: 1 }},
+      { _id: req.params.id },
+      { $inc: { subscriberCount: 1 } },
     ).catch(err => res.status(500).send(err.message));
 
     res.status(201).send();
-  }
-  else {
+  } else {
     res.status(400).send('already subscribed');
   }
 };
@@ -212,13 +211,12 @@ export const removeSubscription = async (req, res) => {
     ).catch(err => res.status(500).send(err.message));
 
     await Category.findOneAndUpdate(
-      { _id: req.params.id, subscriberCount: {$gt: 0 }},
-      { $inc: { subscriberCount: -1 }},
+      { _id: req.params.id, subscriberCount: { $gt: 0 } },
+      { $inc: { subscriberCount: -1 } },
     ).catch(err => res.status(500).send(err.message));
 
     res.status(200).send();
-  }
-  else {
+  } else {
     res.status(400).send('not subscribed');
   }
 };

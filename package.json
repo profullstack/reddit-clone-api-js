@@ -10,6 +10,7 @@
     "dev": "npm run set:dev && docker-compose up --build",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "lint": "npx eslint .",
+    "lint:fix": "npx eslint --fix .",
     "rank": "node -r esm ./bin/ranking.js",
     "cleanup": "node -r esm ./bin/cleanup.js",
     "docker:cleanup": "docker container exec -it upvotocracy-api npm run cleanup"

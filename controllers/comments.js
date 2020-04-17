@@ -9,7 +9,7 @@ export const load = async (req, res, next, id) => {
 };
 
 export const create = async (req, res) => {
-  let post = await req.post.addComment(req.user.id, req.body.comment);
+  const post = await req.post.addComment(req.user.id, req.body.comment);
   await req.post.voteComment(post._id, req.user.id, 1);
   await User.findOneAndUpdate({ _id: req.user.id }, { $inc: { karma: 5 } });
   const fullPost = await Post.findById(req.post.id).populate('author');
@@ -21,8 +21,8 @@ export const create = async (req, res) => {
 
   for (let i = 0; i < req.post.comments.length; i += 1) {
     if (
-      !users.includes(req.post.comments[i].author.id) &&
-      req.post.comments[i].author.id !== req.user.id
+      !users.includes(req.post.comments[i].author.id)
+      && req.post.comments[i].author.id !== req.user.id
     ) {
       await users.push(req.post.comments[i].author.id);
     }

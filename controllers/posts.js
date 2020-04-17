@@ -25,18 +25,17 @@ export const show = async (req, res) => {
 
 export const list = async (req, res) => {
   let posts;
-  let search = { sponsored: false };
-  let skip = req.query.page > 0 ? req.query.page * 15 : 0;
+  const search = { sponsored: false };
+  const skip = req.query.page > 0 ? req.query.page * 15 : 0;
 
-  if (typeof req.user != 'undefined') {
-    const user = await User.findOne({_id: req.user.id}, {'_id': false, 'subscriptions': true})
-    const subscriptions = user.subscriptions
+  if (typeof req.user !== 'undefined') {
+    const user = await User.findOne({ _id: req.user.id }, { _id: false, subscriptions: true });
+    const subscriptions = user.subscriptions;
     search.category = { $in: subscriptions };
-  }
-  else {
+  } else {
     if (typeof req.params.category !== 'undefined') {
       const name = req.params.category;
-      let category = await Category.find({ name });
+      const category = await Category.find({ name });
       search.category = category[0] != undefined ? category[0]._id : null;
     }
 
@@ -48,10 +47,10 @@ export const list = async (req, res) => {
   }
 
   if (req.query.sort != 'comments') {
-    const prefix = req.query.sort.slice(0, 1)
-    const key = req.query.sort.slice(1)
-    const sort = { [key]: parseInt(`${prefix}1`) }
-    
+    const prefix = req.query.sort.slice(0, 1);
+    const key = req.query.sort.slice(1);
+    const sort = { [key]: parseInt(`${prefix}1`) };
+
     posts = await Post.find(search)
       .populate('category')
       .sort(sort)
@@ -98,9 +97,9 @@ export const list = async (req, res) => {
 
   search.sponsored = true;
 
-  let sponsored = await Post.aggregate([
-    { $match : search },
-    { $sample : { size: 1 } },
+  const sponsored = await Post.aggregate([
+    { $match: search },
+    { $sample: { size: 1 } },
     {
       $lookup: {
         from: 'users',
@@ -133,12 +132,14 @@ export const list = async (req, res) => {
 
   delete search.sponsored;
   const count = await Post.countDocuments(search);
-  const more = count > skip * 2 && count > 15 ? true : false;
+  const more = !!(count > skip * 2 && count > 15);
   res.json({ posts, more });
 };
 
 export const create = async (req, res, next) => {
-  const { title, url, category, type, text, thumb } = req.body;
+  const {
+    title, url, category, type, text, thumb,
+  } = req.body;
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
   const author = req.user.id;
@@ -239,8 +240,8 @@ export const upvote = async (req, res) => {
 export const downvote = async (req, res) => {
   const post = await req.post.vote(req.user.id, -1);
   await User.findOneAndUpdate({ _id: post.author.id }, { $inc: { karma: -25 } });
-  await User.findOneAndUpdate({ _id:req.user.id }, { $inc: { karma: 1 } });
-  
+  await User.findOneAndUpdate({ _id: req.user.id }, { $inc: { karma: 1 } });
+
   res.json(post);
 };
 
