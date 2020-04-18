@@ -22,7 +22,7 @@ export const list = async (req, res) => {
     return;
   }
 
-  const categories = await Category.find();
+  const categories = await Category.find().sort('-subscriberCount');
   const cacheRes = await setAsync('/categories', JSON.stringify(categories)).catch(console.error);
   cache.expire('/categories', 60);
   console.log('categories cache set');
