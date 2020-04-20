@@ -4,9 +4,9 @@ import User from '../models/user';
 import { cache, getAsync, setAsync } from '../cache';
 
 export const create = async (req, res, next) => {
-  const { name, description } = req.body;
+  const { name, description, nsfw } = req.body;
   const owner = req.user.id;
-  const category = await Category.create({ name, description, owner });
+  const category = await Category.create({ name, description, owner, nsfw });
   await User.findOneAndUpdate({ _id: req.user.id }, { $inc: { karma: 10 } });
 
   cache.del('/categories');
