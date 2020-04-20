@@ -6,6 +6,7 @@ const categorySchema = new Schema({
   description: { type: String, required: true },
   created: { type: Date, default: Date.now, index: true },
   subscriberCount: { type: Number, default: 0 },
+  nsfw: { type: Boolean, default: false},
 });
 
 const Category = mongoose.model('Category', categorySchema);
