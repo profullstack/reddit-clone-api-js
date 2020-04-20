@@ -6,6 +6,7 @@ import comments from './controllers/comments';
 import category from './controllers/category';
 import retrieve from './controllers/retrieve';
 import rss from './controllers/rss';
+import payments from './controllers/payments';
 
 const wrap = fn => (...args) => fn(...args).catch(args[2]);
 
@@ -51,6 +52,8 @@ router.post('/me/bitcoinaddress', jwtAuth, wrap(users.updateBitcoinAddress));
 router.get('/subscriptions', jwtAuth, posts.list);
 router.post('/me/subscriptions/:id', jwtAuth, users.addSubscription);
 router.delete('/me/subscriptions/:id', jwtAuth, users.removeSubscription);
+router.post('/payments/create', jwtAuth, payments.create)
+router.get('/payments/:invoiceId', payments.status)
 
 router.use('*', (req, res) => res.status(404).json({ message: 'not found' }));
 router.use((err, req, res, next) => res.status(500).json({ errors: err.message }));
