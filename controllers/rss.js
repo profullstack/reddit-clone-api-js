@@ -64,7 +64,7 @@ export const listByCategory = async (req, res) => {
 export const list = async (req, res) => {
   // const cutoff = Date.now() - 86400 * 14 * 1000;
   const { sort = '-created' } = req.query;
-  const posts = await Post.find()
+  let posts = await Post.find()
     .populate('author')
     .populate('category')
     .sort(sort)
@@ -83,6 +83,8 @@ export const list = async (req, res) => {
       media: 'http://search.yahoo.com/mrss/',
     },
   });
+
+  posts = posts.filter((post) => post.category.nsfw !== true);
 
   posts.map(item => {
     const { title, category } = item;
