@@ -53,8 +53,8 @@ router.post('/me/bitcoinaddress', jwtAuth, wrap(users.updateBitcoinAddress));
 router.get('/subscriptions', jwtAuth, posts.list);
 router.post('/me/subscriptions/:id', jwtAuth, users.addSubscription);
 router.delete('/me/subscriptions/:id', jwtAuth, users.removeSubscription);
-router.post('/payments/create', jwtAuth, payments.create)
-router.get('/payments/:invoiceId', payments.status)
+router.post('/payments/create', jwtAuth, payments.create);
+router.post('/payments', payments.status);
 
 router.get('/search/posts', search.posts);
 router.use('*', (req, res) => res.status(404).json({ message: 'not found' }));

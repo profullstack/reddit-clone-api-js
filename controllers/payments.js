@@ -73,7 +73,7 @@ export const create = async (req, res) => {
 };
 
 export const status = async (req, res) => {
-  const { invoiceId } = req.params;
+  const invoiceId = req.body.id
 
   const status = await getStatus(invoiceId)
     .catch(err => res.status(500).send(err))
@@ -84,7 +84,6 @@ export const status = async (req, res) => {
 async function getStatus(invoiceId) {
   let status
   const inv = await Invoice.findOne({ invoiceId })
-  // TODO more validation
 
   if (inv.paymentMethod === 'CARD') {
     const paymentIntent = await stripe.paymentIntents.retrieve(invoiceId);
@@ -99,7 +98,7 @@ async function getStatus(invoiceId) {
     const invoice = await client.get_invoice(invoiceId);
 
     if (invoice.status === 'confirmed' || invoice.status === 'complete') {
-      status = complete
+      status = 'complete'
     }
     else status = invoice.status
   }
