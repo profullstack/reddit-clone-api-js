@@ -29,19 +29,45 @@ async function getPosts() {
   return posts;
 }
 
+async function checkIndices() {
+  const res = await search.indices.exists({index: 'posts'};
+  
+  if (res) {
+      console.log('index already exists');
+  } else {
+      const res2 = await search.indices.create( {index: 'posts'};
+      console.log(res2);
+  }
+}
 (async () => {
   const posts = await getPosts()
     .catch(console.error);
 
   console.log(posts);
-  await search.indices.refresh({ index: 'posts' });
 
+  await checkIndices();
+  await search.indices.refresh({ index: 'posts' });
+ 
   posts.map(async post => {
-    // add to elastic search
-    await search.index({
+    const { body } = await client.exists({
       index: 'posts',
-      body: post,
-    });
+      id: post._id,
+    })
+
+    if (body) {
+      await client.update({
+        index: 'posts',
+        id: post._id,
+        body: post,
+      });
+    } else {
+      // add to elastic search
+      await search.index({
+        index: 'posts',
+        id: post._id,
+        body: post,
+      });
+    }
   });
 
   await search.indices.refresh({ index: 'posts' });
