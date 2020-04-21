@@ -10,6 +10,7 @@ import jwtStrategy from './auth/jwt';
 import routes from './routes';
 import './db';
 import './cache';
+import './search';
 
 const app = express();
 const port = process.env.PORT;

@@ -3,6 +3,7 @@ import Post from '../models/post';
 import User from '../models/user';
 import Category from '../models/category';
 import { cache, getAsync, setAsync } from '../cache';
+import search from '../search';
 
 export const load = async (req, res, next, id) => {
   try {
@@ -168,6 +169,13 @@ export const create = async (req, res, next) => {
     .catch(console.error);
   await User.findOneAndUpdate({ _id: author }, { $inc: { karma: 5 }, ip }).catch(console.error);
   await User.findOneAndUpdate({ _id: newPost.category.owner }, { $inc: { karma: 5 } }).catch(console.error);
+
+  // add to elastic search
+  await search.index({
+    index: 'posts',
+    body: newPost,
+  });
+  await search.indices.refresh({ index: 'posts' });
 
   res.status(201).json(newPost);
 };
