@@ -137,6 +137,12 @@ export const list = async (req, res) => {
   res.json({ posts, more });
 };
 
+export const listByUser = async (req, res) => {
+  const { userId } = req.params
+  const posts = await Post.find( { author: userId })
+  res.json(posts)
+}
+
 export const create = async (req, res, next) => {
   const {
     title, url, category, type, text, thumb,
@@ -273,4 +279,5 @@ export default {
   downvote,
   unvote,
   destroy,
+  listByUser,
 };

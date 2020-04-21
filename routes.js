@@ -7,6 +7,7 @@ import category from './controllers/category';
 import retrieve from './controllers/retrieve';
 import search from './controllers/search';
 import rss from './controllers/rss';
+import payments from './controllers/payments';
 
 const wrap = fn => (...args) => fn(...args).catch(args[2]);
 
@@ -20,6 +21,7 @@ router.get('/posts/rss', rss.list);
 router.get('/posts/rss/:user', rss.listBySubscriptions);
 router.get('/sitemap.xml', rss.sitemap);
 router.get('/posts/:category', posts.list);
+router.get('/posts/user/:userId', posts.listByUser)
 router.get('/posts/:category/rss', rss.listByCategory);
 router.get('/post/:post', posts.show);
 router.post('/posts', jwtAuth, posts.validate, wrap(posts.create));
@@ -51,6 +53,9 @@ router.post('/me/bitcoinaddress', jwtAuth, wrap(users.updateBitcoinAddress));
 router.get('/subscriptions', jwtAuth, posts.list);
 router.post('/me/subscriptions/:id', jwtAuth, users.addSubscription);
 router.delete('/me/subscriptions/:id', jwtAuth, users.removeSubscription);
+router.post('/payments/create', jwtAuth, payments.create);
+router.post('/payments', payments.status);
+router.get('/payments/list', jwtAuth, payments.list)
 router.get('/search/posts', search.posts);
 router.use('*', (req, res) => res.status(404).json({ message: 'not found' }));
 router.use((err, req, res, next) => res.status(500).json({ errors: err.message }));
