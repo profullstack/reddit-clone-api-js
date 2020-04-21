@@ -84,7 +84,7 @@ export const list = async (req, res) => {
     },
   });
 
-  posts = posts.filter((post) => post.category.nsfw !== true);
+  posts = posts.filter(post => post.category.nsfw !== true);
 
   posts.map(item => {
     const { title, category } = item;

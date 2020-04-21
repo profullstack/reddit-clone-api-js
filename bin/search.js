@@ -32,7 +32,7 @@ async function getPosts() {
 (async () => {
   const posts = await getPosts()
     .catch(console.error);
-  
+
   console.log(posts);
   await search.indices.refresh({ index: 'posts' });
 
