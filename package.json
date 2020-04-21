@@ -16,6 +16,7 @@
     "docker:cleanup": "docker container exec -it upvotocracy-api npm run cleanup"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^7.6.1",
     "bcryptjs": "^2.4.3",
     "btcpay": "^0.2.4",
     "cheerio": "^1.0.0-rc.3",

@@ -5,6 +5,7 @@ import posts from './controllers/posts';
 import comments from './controllers/comments';
 import category from './controllers/category';
 import retrieve from './controllers/retrieve';
+import search from './controllers/search';
 import rss from './controllers/rss';
 
 const wrap = fn => (...args) => fn(...args).catch(args[2]);
@@ -42,7 +43,7 @@ router.get('/inbox', jwtAuth, users.inbox);
 router.delete('/inbox/:id', jwtAuth, users.deleteInbox);
 router.get('/inbox/count', jwtAuth, users.inboxCount);
 router.get('/leaderboard', users.getAll);
-router.get('/me', jwtAuth, users.getMe),
+router.get('/me', jwtAuth, users.getMe);
 router.post('/me/links', jwtAuth, wrap(users.updateLinks));
 router.post('/me/bitcoinaddress', jwtAuth, wrap(users.updateBitcoinAddress));
 // router.get('/me/links', jwtAuth, users.getLinks);
@@ -50,7 +51,7 @@ router.post('/me/bitcoinaddress', jwtAuth, wrap(users.updateBitcoinAddress));
 router.get('/subscriptions', jwtAuth, posts.list);
 router.post('/me/subscriptions/:id', jwtAuth, users.addSubscription);
 router.delete('/me/subscriptions/:id', jwtAuth, users.removeSubscription);
-
+router.get('/search/posts', search.posts);
 router.use('*', (req, res) => res.status(404).json({ message: 'not found' }));
 router.use((err, req, res, next) => res.status(500).json({ errors: err.message }));
 
