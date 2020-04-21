@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import Post from '../models/post';
-import Category from '../models/category';
 import search from '../search';
 
 const log = require('debug');
