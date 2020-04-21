@@ -12,6 +12,7 @@
     "lint": "npx eslint .",
     "lint:fix": "npx eslint --fix .",
     "rank": "node -r esm ./bin/ranking.js",
+    "search": "node -r esm ./bin/search.js",
     "cleanup": "node -r esm ./bin/cleanup.js",
     "docker:cleanup": "docker container exec -it upvotocracy-api npm run cleanup"
   },
