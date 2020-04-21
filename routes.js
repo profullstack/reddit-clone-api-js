@@ -55,6 +55,7 @@ router.post('/me/subscriptions/:id', jwtAuth, users.addSubscription);
 router.delete('/me/subscriptions/:id', jwtAuth, users.removeSubscription);
 router.post('/payments/create', jwtAuth, payments.create);
 router.post('/payments', payments.status);
+router.get('/payments/list', jwtAuth, payments.list)
 
 router.get('/search/posts', search.posts);
 router.use('*', (req, res) => res.status(404).json({ message: 'not found' }));

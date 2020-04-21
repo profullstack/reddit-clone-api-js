@@ -13,7 +13,10 @@ const invoiceSchema = new Schema(
     amount: Number,
     product: String,
     status: String,
-    postId: [ Schema.Types.ObjectId ],
+    postId: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Post',
+    }],
   },
   {
     toObject: { virtuals: true },

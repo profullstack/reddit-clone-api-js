@@ -81,6 +81,21 @@ export const status = async (req, res) => {
   res.json(status)
 }
 
+export const list = async (req, res) => {
+  const invoices = await Invoice.find({ user: req.user.id })
+    .populate('postId')
+    .catch(err => res.status(500).send(err))
+
+  // check status of unpaid invoices
+  invoices.forEach(async (invoice) => {
+    if (invoice.status != 'complete') {
+      const stat = await getStatus(invoice.invoiceId)
+    }
+  })
+
+  res.json(invoices)
+}
+
 async function getStatus(invoiceId) {
   let status
   const inv = await Invoice.findOne({ invoiceId })
@@ -115,4 +130,5 @@ async function getStatus(invoiceId) {
 export default { 
   create,
   status,
+  list,
  }
