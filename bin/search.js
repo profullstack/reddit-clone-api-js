@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Post from '../models/post';
+import Category from '../models/category';
 import search from '../search';
 
 const log = require('debug');
@@ -34,6 +35,7 @@ async function getPosts() {
     .catch(console.error);
   
   console.log(posts);
+  await search.indices.refresh({ index: 'posts' });
 
   posts.map(async post => {
     // add to elastic search
@@ -44,4 +46,5 @@ async function getPosts() {
   });
 
   await search.indices.refresh({ index: 'posts' });
+  process.exit(0);
 })();
