@@ -1,8 +1,9 @@
+import Invoice from '../models/invoice';
+import Post from '../models/post';
+
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET);
 const Btcpay = require('btcpay');
 const QRCode = require('qrcode');
-import Invoice from '../models/invoice';
-import Post from '../models/post';
 
 const keypair = Btcpay.crypto.load_keypair(
   /* eslint-disable-next-line new-cap */
@@ -14,7 +15,7 @@ const client = new Btcpay.BTCPayClient(process.env.BTCPAY_URL, keypair, {
 
 export const create = async (req, res) => {
   // TODO products object
-  const { paymentMethod, postId } = req.body
+  const { paymentMethod, postId } = req.body;
 
   const amount = postId.length * 10;
 
@@ -23,7 +24,7 @@ export const create = async (req, res) => {
       amount: amount * 100,
       currency: 'usd',
     })
-      .catch(err => res.status(500).send(err))
+      .catch(err => res.status(500).send(err));
 
     await Invoice.create({
       user: req.user.id,
@@ -73,62 +74,60 @@ export const create = async (req, res) => {
 };
 
 export const status = async (req, res) => {
-  const invoiceId = req.body.id
+  const invoiceId = req.body.id;
 
   const status = await getStatus(invoiceId)
-    .catch(err => res.status(500).send(err))
+    .catch(err => res.status(500).send(err));
 
-  res.json(status)
-}
+  res.json(status);
+};
 
 export const list = async (req, res) => {
   const invoices = await Invoice.find({ user: req.user.id })
     .populate('postId')
-    .catch(err => res.status(500).send(err))
+    .catch(err => res.status(500).send(err));
 
   // check status of unpaid invoices
-  invoices.forEach(async (invoice) => {
+  invoices.forEach(async invoice => {
     if (invoice.status != 'complete') {
-      const stat = await getStatus(invoice.invoiceId)
+      const stat = await getStatus(invoice.invoiceId);
     }
-  })
+  });
 
-  res.json(invoices)
-}
+  res.json(invoices);
+};
 
 async function getStatus(invoiceId) {
-  let status
-  const inv = await Invoice.findOne({ invoiceId })
+  let status;
+  const inv = await Invoice.findOne({ invoiceId });
 
   if (inv.paymentMethod === 'CARD') {
     const paymentIntent = await stripe.paymentIntents.retrieve(invoiceId);
 
     if (paymentIntent.amount === paymentIntent.amount_received) {
-      status = 'complete'
-    }
-    else status = 'unpaid'
+      status = 'complete';
+    } else status = 'unpaid';
   }
 
   if (inv.paymentMethod === 'BTC') {
     const invoice = await client.get_invoice(invoiceId);
 
     if (invoice.status === 'confirmed' || invoice.status === 'complete') {
-      status = 'complete'
-    }
-    else status = invoice.status
+      status = 'complete';
+    } else status = invoice.status;
   }
 
   if (status === 'complete') {
-    await Post.updateMany({ _id: inv.postId }, { sponsored: true })
-    inv.status = 'complete'
-    await inv.save()
+    await Post.updateMany({ _id: inv.postId }, { sponsored: true });
+    inv.status = 'complete';
+    await inv.save();
   }
 
-  return { status }
+  return { status };
 }
 
-export default { 
+export default {
   create,
   status,
   list,
- }
+};

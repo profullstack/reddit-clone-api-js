@@ -138,10 +138,10 @@ export const list = async (req, res) => {
 };
 
 export const listByUser = async (req, res) => {
-  const { userId } = req.params
-  const posts = await Post.find( { author: userId })
-  res.json(posts)
-}
+  const { userId } = req.params;
+  const posts = await Post.find({ author: userId });
+  res.json(posts);
+};
 
 export const create = async (req, res, next) => {
   const {

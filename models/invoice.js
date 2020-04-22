@@ -21,7 +21,8 @@ const invoiceSchema = new Schema(
   {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
-  });
+  },
+);
 
 
 const invoice = mongoose.model('invoice', invoiceSchema);

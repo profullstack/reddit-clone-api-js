@@ -23,52 +23,53 @@ mongoose.connection.on('connected', () => debug('successfully connected to db'))
 mongoose.connection.on('error', console.error);
 
 async function getPosts() {
-  const posts = await Post.find({})
-    .catch(console.error);
+  const posts = await Post.find({}).catch(console.error);
 
   return posts;
 }
 
 async function checkIndices() {
-  const res = await search.indices.exists({index: 'posts'};
-  
-  if (res) {
-      console.log('index already exists');
-  } else {
-      const res2 = await search.indices.create( {index: 'posts'};
-      console.log(res2);
+  const { body } = await search.indices.exists({ index: 'posts' });
+
+  console.log(body);
+
+  if (!body) {
+    await search.indices.create({ index: 'posts' });
   }
 }
 (async () => {
-  const posts = await getPosts()
-    .catch(console.error);
+  const posts = await getPosts().catch(console.error);
 
   console.log(posts);
 
   await checkIndices();
   await search.indices.refresh({ index: 'posts' });
- 
-  posts.map(async post => {
-    const { body } = await client.exists({
+
+  for (const post of posts) {
+    const { body } = await search.exists({
       index: 'posts',
       id: post._id,
-    })
+    });
 
     if (body) {
-      await client.update({
+      console.log('update', post._id);
+      await search.update({
         index: 'posts',
         id: post._id,
         body: post,
       });
     } else {
       // add to elastic search
+      console.log('add', post._id);
       await search.index({
         index: 'posts',
         id: post._id,
         body: post,
       });
     }
-  });
+  }
+
+  console.log(posts.length, 'posts found');
 
   await search.indices.refresh({ index: 'posts' });
   process.exit(0);
