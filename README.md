@@ -6,6 +6,9 @@
     npm i
     npm run dev
 
+    # fix elasticsearch connection errors:
+    sudo sysctl -w vm.max_map_count=262144
+
 # deploy
 
     npm run deploy

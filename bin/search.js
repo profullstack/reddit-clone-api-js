@@ -37,39 +37,74 @@ async function checkIndices() {
     await search.indices.create({ index: 'posts' });
   }
 }
-(async () => {
-  const posts = await getPosts().catch(console.error);
 
-  console.log(posts);
+let posts = [];
+const all = [];
+let added = 0;
+let updated = 0;
+const failed = {
+  updates: 0,
+  inserts: 0,
+}
+
+const queueNext = async () => {
+  if (!posts.length) return;
+  const post = posts.shift();
+  const { body } = await search
+    .exists({
+      index: 'posts',
+      id: post._id,
+    })
+    .catch(('no post', post._id));
+
+  if (body) {
+    console.log('update', post._id);
+    updated += 1;
+    await search
+      .update({
+        index: 'posts',
+        id: post._id,
+        body: { doc: post },
+      })
+      .catch(err => {
+        failed.updates += 1;
+        console.log(JSON.stringify(err), 'update failed', post._id, post);
+      });
+  } else {
+    // add to elastic search
+    added += 1;
+    console.log('add', post._id);
+    await search
+      .index({
+        index: 'posts',
+        id: post._id,
+        body: post,
+      })
+      .catch(err => {
+        failed.inserts += 1;
+        console.error(err);
+      });
+  }
+
+  all.push(post);
+  await queueNext();
+};
+
+(async () => {
+  posts = await getPosts().catch(console.error);
+
+  // console.log(posts);
 
   await checkIndices();
   await search.indices.refresh({ index: 'posts' });
 
-  for (const post of posts) {
-    const { body } = await search.exists({
-      index: 'posts',
-      id: post._id,
-    });
+  await Promise.all(Array.from({ length: 100 }, queueNext));
 
-    if (body) {
-      console.log('update', post._id);
-      await search.update({
-        index: 'posts',
-        id: post._id,
-        body: post,
-      });
-    } else {
-      // add to elastic search
-      console.log('add', post._id);
-      await search.index({
-        index: 'posts',
-        id: post._id,
-        body: post,
-      });
-    }
-  }
-
-  console.log(posts.length, 'posts found');
+  console.log(all.length, 'posts found');
+  console.log(updated, 'posts updated');
+  console.log(added, 'posts added');
+  console.log(failed.updates, 'failed updates');
+  console.log(failed.inserts, 'failed inserts');
 
   await search.indices.refresh({ index: 'posts' });
   process.exit(0);
