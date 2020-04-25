@@ -173,6 +173,7 @@ export const create = async (req, res, next) => {
   // add to elastic search
   await search.index({
     index: 'posts',
+    id: newPost._id,
     body: newPost,
   });
   await search.indices.refresh({ index: 'posts' });

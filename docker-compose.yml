@@ -37,6 +37,7 @@ services:
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
     container_name: upvotocracy-es01
+    restart: always
     environment:
       - node.name=es01
       - cluster.name=es-docker-cluster
