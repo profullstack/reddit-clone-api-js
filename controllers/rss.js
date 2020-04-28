@@ -128,10 +128,12 @@ export const sitemap = async (req, res) => {
   };
   const parser = new Parser(defaultOptions);
   const { sort = '-created' } = req.query;
-  const posts = await Post.find()
+  let posts = await Post.find()
     .populate('author')
     .populate('category')
     .sort(sort);
+
+  posts = posts.filter(post => post.category.nsfw !== true);
 
   const pages = [];
   const doc = {
@@ -166,9 +168,11 @@ export const listByUser = async (req, res) => {
   const { sort = '-score' } = req.query;
   const username = req.params.user;
   const author = await User.findOne({ username });
-  const posts = await Post.find({ author: author.id })
+  let posts = await Post.find({ author: author.id })
     .sort(sort)
     .limit(20);
+
+  posts = posts.filter(post => post.category.nsfw !== true);
 
   const feed = new RSS({
     title: 'upvotocracy.com RSS feed',

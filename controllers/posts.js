@@ -4,6 +4,7 @@ import User from '../models/user';
 import Category from '../models/category';
 import { cache, getAsync, setAsync } from '../cache';
 import search from '../search';
+import getRandomNumber from '../utils/random';
 
 export const load = async (req, res, next, id) => {
   try {
