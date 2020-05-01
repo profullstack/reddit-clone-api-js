@@ -17,7 +17,7 @@ export const create = async (req, res) => {
   // TODO products object
   const { paymentMethod, postId } = req.body;
 
-  const amount = postId.length * 10;
+  const amount = postId.length * process.env.COST_SPONSORED_POST;
 
   if (paymentMethod === 'CARD') {
     const paymentIntent = await stripe.paymentIntents.create({

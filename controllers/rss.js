@@ -4,6 +4,9 @@ import Post from '../models/post';
 import Category from '../models/category';
 import User from '../models/user';
 
+const { SITE_NAME, SITE_URL, SITE_DOMAIN, SITE_DESCRIPTION } = process.env;
+
+
 export const listByCategory = async (req, res) => {
   // const cutoff = Date.now() - 86400 * 14 * 1000;
   const { sort = '-created' } = req.query;
@@ -15,12 +18,12 @@ export const listByCategory = async (req, res) => {
     .sort(sort)
     .limit(20);
   const feed = new RSS({
-    title: `upvotocracy.com/a/${name} RSS feed`,
-    description: `Zero moderation Reddit clone: ${category.description || ''}`,
-    feed_url: `https://upvotocracy.com/api/1/posts/${name}/rss?sort=${sort}`,
-    site_url: 'https://upvotocracy.com',
-    image_url: 'https://upvotocracy.com/images/favicon-196x196.png',
-    copyright: '&copy; 2020 upvotocracy.com',
+    title: `${SITE_DOMAIN}/a/${name} RSS feed`,
+    description: `${SITE_DESCRIPTION} ${category.description || ''}`,
+    feed_url: `${SITE_URL}/api/1/posts/${name}/rss?sort=${sort}`,
+    site_url: '${SITE_URL}',
+    image_url: `${SITE_URL}/images/favicon-196x196.png`,
+    copyright: `&copy; 2020 ${SITE_NAME}`,
     language: 'en',
     pubDate: new Date(),
     ttl: '60',
@@ -33,7 +36,7 @@ export const listByCategory = async (req, res) => {
     const { title, category, text } = item;
     const categories = [category.name];
     const author = item.author.username;
-    const url = `https://upvotocracy.com/a/${category.name}/${item._id}`;
+    const url = `${SITE_URL}/a/${category.name}/${item._id}`;
     const image_custom_element = {
       'media:content': [
         {
@@ -70,12 +73,12 @@ export const list = async (req, res) => {
     .sort(sort)
     .limit(20);
   const feed = new RSS({
-    title: 'upvotocracy.com RSS feed',
-    description: 'Zero moderation Reddit clone.',
-    feed_url: `https://upvotocracy.com/api/1/posts/rss?sort=${sort}`,
-    site_url: 'https://upvotocracy.com',
-    image_url: 'https://upvotocracy.com/images/favicon-196x196.png',
-    copyright: '&copy; 2020 upvotocracy.com',
+    title: `${SITE_DOMAIN} RSS feed`,
+    description: SITE_DESCRIPTION,
+    feed_url: `${SITE_URL}/api/1/posts/rss?sort=${sort}`,
+    site_url: `${SITE_URL}`,
+    image_url: `${SITE_URL}/images/favicon-196x196.png`,
+    copyright: `&copy; 2020 ${SITE_DOMAIN}`,
     language: 'en',
     pubDate: new Date(),
     ttl: '60',
@@ -90,7 +93,7 @@ export const list = async (req, res) => {
     const { title, category } = item;
     const categories = [category.name];
     const author = item.author.username;
-    const url = `https://upvotocracy.com/a/${category.name}/${item._id}`;
+    const url = `${SITE_URL}/a/${category.name}/${item._id}`;
     const image_custom_element = {
       'media:content': [
         {
@@ -142,7 +145,7 @@ export const sitemap = async (req, res) => {
 
   posts.map(item => {
     const { title, category } = item;
-    const url = `https://upvotocracy.com/a/${category.name}/${item._id}`;
+    const url = `${SITE_URL}/a/${category.name}/${item._id}`;
 
     pages.push({
       loc: url,
@@ -175,12 +178,12 @@ export const listByUser = async (req, res) => {
   posts = posts.filter(post => post.category.nsfw !== true);
 
   const feed = new RSS({
-    title: 'upvotocracy.com RSS feed',
-    description: 'Zero moderation Reddit clone.',
-    feed_url: `https://upvotocracy.com/api/1/posts/${author.username}/rss?sort=${sort}`,
-    site_url: 'https://upvotocracy.com',
-    image_url: 'https://upvotocracy.com/images/favicon-196x196.png',
-    copyright: '&copy; 2020 upvotocracy.com',
+    title: `${SITE_DOMAIN} RSS feed`,
+    description: SITE_DESCRIPTION,
+    feed_url: `${SITE_URL}/api/1/posts/${author.username}/rss?sort=${sort}`,
+    site_url: `${SITE_URL}`,
+    image_url: `${SITE_URL}/images/favicon-196x196.png`,
+    copyright: `&copy; 2020 ${SITE_DOMAIN}`,
     language: 'en',
     pubDate: new Date(),
     ttl: '60',
@@ -193,7 +196,7 @@ export const listByUser = async (req, res) => {
     const { title, category } = item;
     const categories = [category.name];
     const author = item.author.username;
-    const url = `https://upvotocracy.com/a/${category.name}/${item._id}`;
+    const url = `${SITE_URL}/a/${category.name}/${item._id}`;
     // console.log(item);
 
     const image_custom_element = {
@@ -233,12 +236,12 @@ export const listBySubscriptions = async (req, res) => {
     .sort(sort)
     .limit(20);
   const feed = new RSS({
-    title: 'upvotocracy.com RSS feed',
-    description: 'Zero moderation Reddit clone',
-    feed_url: `https://upvotocracy.com/api/1/posts/rss/${req.params.user}`,
-    site_url: 'https://upvotocracy.com',
-    image_url: 'https://upvotocracy.com/images/favicon-196x196.png',
-    copyright: '&copy; 2020 upvotocracy.com',
+    title: `${SITE_DOMAIN} RSS feed`,
+    description: SITE_DESCRIPTION,
+    feed_url: `${SITE_URL}/api/1/posts/rss/${req.params.user}`,
+    site_url: `${SITE_URL}`,
+    image_url: `${SITE_URL}/images/favicon-196x196.png`,
+    copyright: `&copy; 2020 ${SITE_DOMAIN}`,
     language: 'en',
     pubDate: new Date(),
     ttl: '60',
@@ -253,7 +256,7 @@ export const listBySubscriptions = async (req, res) => {
     const { title, category, text } = item;
     const categories = [category.name];
     const author = item.author.username;
-    const url = `https://upvotocracy.com/a/${category.name}/${item._id}`;
+    const url = `${SITE_URL}/a/${category.name}/${item._id}`;
     const image_custom_element = {
       'media:content': [
         {
