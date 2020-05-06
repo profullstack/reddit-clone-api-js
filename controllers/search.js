@@ -30,7 +30,7 @@ export const posts = async (req, res) => {
         query: {
           multi_match: {
             query: q,
-            fields: ['title', 'text'],
+            fields: ['title', 'text', 'url'],
           },
         },
       },
