@@ -6,8 +6,8 @@ services:
     build: .
     env_file: .env
     ports:
-      - "8537:8537"
-      - "9228:9229"
+      - "127.0.0.1:8537:8537"
+      - "127.0.0.1:9228:9229"
     links:
       - mongo
     volumes:
@@ -23,7 +23,7 @@ services:
     volumes:
       - mongo_data:/data/db
     ports:
-      - "28016:27017"
+      - "127.0.0.1:28016:27017"
     networks:
       - upvotocracy-network
   redis:
@@ -31,7 +31,7 @@ services:
     restart: always
     container_name: upvotocracy-cache
     ports:
-      - "6381:6379"
+      - "127.0.0.1:6381:6379"
     networks:
       - upvotocracy-network
   es01:
@@ -52,7 +52,7 @@ services:
     volumes:
       - data01:/usr/share/elasticsearch/data
     ports:
-      - 9201:9200
+      - 127.0.0.1:9201:9200
     networks:
       - upvotocracy-network
 networks:

@@ -130,7 +130,8 @@ export const list = async (req, res) => {
     },
     { $unset: '_id' },
   ]);
-  if (typeof sponsored[0] !== 'undefined') posts.splice(Math.random() * posts.length, 0, sponsored[0]);
+  if (typeof sponsored[0] !== 'undefined')
+    posts.splice(Math.random() * posts.length, 0, sponsored[0]);
 
   delete search.sponsored;
   const count = await Post.countDocuments(search);
@@ -145,10 +146,15 @@ export const listByUser = async (req, res) => {
 };
 
 export const create = async (req, res, next) => {
-  const {
-    title, url, category, type, text, thumb,
-  } = req.body;
+  const { title, url, category, type, text, thumb } = req.body;
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const existingPost = await Post.find({ url });
+
+  if (existingPost) {
+    return res.status(422).json({
+      message: 'Duplicate URL',
+    });
+  }
 
   const author = req.user.id;
   console.log(ip, author, title);
@@ -169,7 +175,9 @@ export const create = async (req, res, next) => {
     .populate('category')
     .catch(console.error);
   await User.findOneAndUpdate({ _id: author }, { $inc: { karma: 5 }, ip }).catch(console.error);
-  await User.findOneAndUpdate({ _id: newPost.category.owner }, { $inc: { karma: 5 } }).catch(console.error);
+  await User.findOneAndUpdate({ _id: newPost.category.owner }, { $inc: { karma: 5 } }).catch(
+    console.error,
+  );
 
   // add to elastic search
   await search.index({
