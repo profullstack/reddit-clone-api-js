@@ -27,7 +27,7 @@ export const localAuth = (req, res, next) => {
 export const jwtAuth = (req, res, next) => {
   passport.authenticate('jwt', { session: false }, (err, user) => {
     if (err) return next(err);
-    if (!user) return res.status(401).json({ errors: 'must be logged in'});
+    if (!user) return res.status(401).json({ errors: 'must be logged in' });
     req.user = user;
     next();
   })(req, res);

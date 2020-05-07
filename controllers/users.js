@@ -129,7 +129,7 @@ export const deleteInbox = async (req, res) => {
   await User.updateOne(
     { _id: req.user.id, 'inbox.comment': req.params.id },
     { $pull: { inbox: { comment: req.params.id } } },
-  ).catch((err) => res.status(500).send(err));
+  ).catch(err => res.status(500).send(err));
   res.status(200).json({ msg: 'Inbox item has been deleted' });
 };
 

@@ -1,42 +1,42 @@
 version: "3.5"
 services:
   api:
-    container_name: upvotocracy-api
+    container_name: coupondeals-api
     restart: always
     build: .
     env_file: .env
     ports:
-      - "127.0.0.1:8537:8537"
-      - "127.0.0.1:9228:9229"
+      - "127.0.0.1:8538:8537"
+      - "127.0.0.1:9227:9229"
     links:
       - mongo
     volumes:
       - ./index.js:/usr/src/app/index.js
       - ./.env:/usr/src/app/.env
     networks:
-      - upvotocracy-network
+      - coupondeals-network
   mongo:
-    container_name: upvotocracy-mongo
+    container_name: coupondeals-mongo
     restart: always
     image: mongo:latest
     env_file: .env
     volumes:
       - mongo_data:/data/db
     ports:
-      - "127.0.0.1:28016:27017"
+      - "127.0.0.1:28026:27017"
     networks:
-      - upvotocracy-network
+      - coupondeals-network
   redis:
     image: redis
     restart: always
-    container_name: upvotocracy-cache
+    container_name: coupondeals-cache
     ports:
-      - "127.0.0.1:6381:6379"
+      - "127.0.0.1:6382:6379"
     networks:
-      - upvotocracy-network
+      - coupondeals-network
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
-    container_name: upvotocracy-es01
+    container_name: coupondeals-es01
     restart: always
     environment:
       - node.name=es01
@@ -52,12 +52,12 @@ services:
     volumes:
       - data01:/usr/share/elasticsearch/data
     ports:
-      - 127.0.0.1:9201:9200
+      - 127.0.0.1:9202:9200
     networks:
-      - upvotocracy-network
+      - coupondeals-network
 networks:
-  upvotocracy-network:
-    name: upvotocracy-network
+  coupondeals-network:
+    name: coupondeals-network
 volumes:
   mongo_data: {}
   data01:

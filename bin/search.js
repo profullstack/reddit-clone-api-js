@@ -45,7 +45,7 @@ let updated = 0;
 const failed = {
   updates: 0,
   inserts: 0,
-}
+};
 
 const queueNext = async () => {
   if (!posts.length) return;
