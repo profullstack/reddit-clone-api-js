@@ -148,11 +148,11 @@ export const listByUser = async (req, res) => {
 export const create = async (req, res, next) => {
   const { title, url, category, type, text, thumb } = req.body;
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  const existingPost = await Post.find({ url });
+  const existingPost = await Post.find({ url }).populate('category');
 
-  if (existingPost) {
+  if (existingPost.url === url) {
     return res.status(422).json({
-      message: 'Duplicate URL',
+      message: 'Duplicate URL: /${existingPost.category.name}/${existingPost.id}',
     });
   }
 
