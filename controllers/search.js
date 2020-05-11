@@ -9,10 +9,11 @@ async function getPosts(postIds) {
     const post = await Post.findById(postId)
       .populate('-subscriptions')
       .populate('-author.subscriptions')
-      .catch(err => {
+      .catch((err) => {
         return res.status(400).json(err);
       });
 
+    if (!post) continue;
     post.author.subscriptions = [];
     posts.push(post);
   }
@@ -27,6 +28,8 @@ export const posts = async (req, res) => {
     .search({
       index: 'posts',
       body: {
+        from: 0,
+        size: 100,
         query: {
           multi_match: {
             query: q,
@@ -35,12 +38,12 @@ export const posts = async (req, res) => {
         },
       },
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       return res.json(err);
     });
 
-  const postIds = body.hits.hits.map(post => {
+  const postIds = body.hits.hits.map((post) => {
     return post._id;
   });
 

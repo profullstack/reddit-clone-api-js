@@ -53,11 +53,7 @@ export const list = async (req, res) => {
     const key = req.query.sort.slice(1);
     const sort = { [key]: parseInt(`${prefix}1`) };
 
-    posts = await Post.find(search)
-      .populate('category')
-      .sort(sort)
-      .skip(skip)
-      .limit(15);
+    posts = await Post.find(search).populate('category').sort(sort).skip(skip).limit(15);
   } else {
     posts = await Post.aggregate([
       { $match: search },
@@ -159,6 +155,12 @@ export const create = async (req, res, next) => {
 
   const author = req.user.id;
   console.log(ip, author, title);
+
+  // todo move this to config file.
+  // if (url.indexOf('technobd.xyz')) {
+  //   return res.status(400).json({ msg: 'Domain has been banned for spamming.'});
+  // }
+
   const post = await Post.create({
     title,
     url,
@@ -167,14 +169,12 @@ export const create = async (req, res, next) => {
     type,
     text,
     thumb,
-  }).catch(err => {
+  }).catch((err) => {
     console.error(err);
     res.status(422).json(err);
   });
 
-  const newPost = await Post.findById(post.id)
-    .populate('category')
-    .catch(console.error);
+  const newPost = await Post.findById(post.id).populate('category').catch(console.error);
   await User.findOneAndUpdate({ _id: author }, { $inc: { karma: 5 }, ip }).catch(console.error);
   await User.findOneAndUpdate({ _id: newPost.category.owner }, { $inc: { karma: 5 } }).catch(
     console.error,
@@ -200,10 +200,10 @@ export const validate = async (req, res, next) => {
       .isLength({ min: 1 })
       .withMessage('cannot be blank')
 
-      .isLength({ max: 200 })
-      .withMessage('must be at most 100 characters long')
+      .isLength({ max: 250 })
+      .withMessage('must be at most 250 characters long')
 
-      .custom(value => value.trim() === value)
+      .custom((value) => value.trim() === value)
       .withMessage('cannot start or end with whitespace'),
 
     body('type')
@@ -242,7 +242,7 @@ export const validate = async (req, res, next) => {
   }
 
   await Promise.all(
-    validations.map(validation => {
+    validations.map((validation) => {
       if (!('run' in validation)) return;
       return validation.run(req);
     }),
