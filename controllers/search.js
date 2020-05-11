@@ -13,6 +13,7 @@ async function getPosts(postIds) {
         return res.status(400).json(err);
       });
 
+    if (!post) continue;
     post.author.subscriptions = [];
     posts.push(post);
   }
