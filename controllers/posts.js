@@ -155,6 +155,12 @@ export const create = async (req, res, next) => {
 
   const author = req.user.id;
   console.log(ip, author, title);
+
+  // todo move this to config file.
+  // if (url.indexOf('technobd.xyz')) {
+  //   return res.status(400).json({ msg: 'Domain has been banned for spamming.'});
+  // }
+
   const post = await Post.create({
     title,
     url,
