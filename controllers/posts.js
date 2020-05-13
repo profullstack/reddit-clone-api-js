@@ -144,7 +144,11 @@ export const listByUser = async (req, res) => {
 export const create = async (req, res, next) => {
   const { title, url, category, type, text, thumb } = req.body;
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  const existingPost = await Post.findOne({ url: url }).populate('category');
+  let existingPost;
+
+  if (url) {
+    existingPost = await Post.findOne({ url: url }).populate('category');
+  }
 
   if (existingPost) {
     return res.status(422).json({
