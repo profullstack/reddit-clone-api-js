@@ -21,7 +21,7 @@ services:
     image: mongo:latest
     env_file: .env
     volumes:
-      - mongo_data:/data/db
+      - ./mongo_data:/data/db
     ports:
       - "127.0.0.1:28016:27017"
     networks:
@@ -50,7 +50,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - data01:/usr/share/elasticsearch/data
+      - ./data01:/usr/share/elasticsearch/data
     ports:
       - 127.0.0.1:9201:9200
     networks:
