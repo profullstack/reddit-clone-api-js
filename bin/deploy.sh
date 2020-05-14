@@ -3,7 +3,7 @@
 . .env
 . $HOME/.bashrc
 
-args=(-azvP --delete --exclude=node_modules --exclude=.idea --exclude=.git)
+args=(-azvP --delete --exclude=node_modules --exclude=.idea --exclude=.git --exclude=mongo_data --exclude=data01)
 hosts=($HOST_DOMAIN) # tornado lightning thunder tundra jefferson
 dry=() #add --dry-run to enable testing
 user=$HOST_USER
