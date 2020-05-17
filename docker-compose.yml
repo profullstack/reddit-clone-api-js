@@ -1,10 +1,10 @@
 version: "3.5"
 services:
   api:
-    container_name: upvotocracy-api
+    env_file: .env
     restart: always
     build: .
-    env_file: .env
+    container_name: ${DOCKER_CONTAINER_API_NAME}
     ports:
       - "127.0.0.1:${DOCKER_CONTAINER_API_PORT}:8537"
       - "127.0.0.1:${DOCKER_CONTAINER_DEBUG_PORT}:9229"
@@ -16,6 +16,7 @@ services:
     networks:
       - ${DOCKER_NETWORK_NAME}
   mongo:
+    env_file: .env
     container_name: ${DOCKER_CONTAINER_MONGO_NAME}
     restart: always
     image: mongo:latest
@@ -27,6 +28,7 @@ services:
     networks:
       - ${DOCKER_NETWORK_NAME}
   redis:
+    env_file: .env
     image: redis
     restart: always
     container_name: ${DOCKER_CONTAINER_REDIS_NAME}
@@ -35,6 +37,7 @@ services:
     networks:
       - ${DOCKER_NETWORK_NAME}
   es01:
+    env_file: .env
     image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
     container_name: ${DOCKER_CONTAINER_ES_NAME}
     restart: always
@@ -56,7 +59,7 @@ services:
     networks:
       - ${DOCKER_NETWORK_NAME}
 networks:
-  ${DOCKER_NETWORK_NAME}:
+  watchlivesportsstreams-network:
     name: ${DOCKER_NETWORK_NAME}
 volumes:
   mongo_data: {}
