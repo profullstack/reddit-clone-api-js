@@ -33,8 +33,8 @@ export const listByCategory = async (req, res) => {
   });
 
   posts.map(item => {
-    const { title, category, text } = item;
-    const categories = [category.name];
+    const { title, category, text, hashtags } = item;
+    const categories = [category.name, ...hashtags];
     const author = item.author.username;
     const url = `${SITE_URL}/a/${category.name}/${item._id}`;
     const image_custom_element = {
@@ -90,8 +90,8 @@ export const list = async (req, res) => {
   posts = posts.filter(post => post.category.nsfw !== true);
 
   posts.map(item => {
-    const { title, category } = item;
-    const categories = [category.name];
+    const { title, category, hashtags } = item;
+    const categories = [category.name, ...hashtags];
     const author = item.author.username;
     const url = `${SITE_URL}/a/${category.name}/${item._id}`;
     const image_custom_element = {
@@ -193,8 +193,8 @@ export const listByUser = async (req, res) => {
   });
 
   posts.map(item => {
-    const { title, category } = item;
-    const categories = [category.name];
+    const { title, category, hashtags } = item;
+    const categories = [category.name, ...hashtags];
     const author = item.author.username;
     const url = `${SITE_URL}/a/${category.name}/${item._id}`;
     // console.log(item);
