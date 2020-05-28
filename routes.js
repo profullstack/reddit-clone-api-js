@@ -57,6 +57,7 @@ router.post('/payments/create', jwtAuth, payments.create);
 router.post('/payments', payments.status);
 router.get('/payments/list', jwtAuth, payments.list);
 router.get('/search/posts', search.posts);
+router.get('/tags/:hashtag', posts.list);
 router.use('*', (req, res) => res.status(404).json({ message: 'not found' }));
 router.use((err, req, res, next) => res.status(500).json({ errors: err.message }));
 
