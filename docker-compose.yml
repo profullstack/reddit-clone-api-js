@@ -59,7 +59,7 @@ services:
     networks:
       - ${DOCKER_NETWORK_NAME}
 networks:
-  watchlivesportsstreams-network:
+  upvotocracy-network:
     name: ${DOCKER_NETWORK_NAME}
 volumes:
   mongo_data: {}
