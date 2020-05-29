@@ -23,6 +23,7 @@ router.get('/sitemap.xml', rss.sitemap);
 router.get('/posts/:category', posts.list);
 router.get('/posts/user/:userId', posts.listByUser);
 router.get('/posts/:category/rss', rss.listByCategory);
+router.get('/posts/rss/tags/:hashtag', rss.listByHashtag);
 router.get('/post/:post', posts.show);
 router.post('/posts', jwtAuth, posts.validate, wrap(posts.create));
 router.delete('/post/:post', jwtAuth, postAuth, posts.destroy);

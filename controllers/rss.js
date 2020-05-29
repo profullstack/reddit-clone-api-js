@@ -21,7 +21,63 @@ export const listByCategory = async (req, res) => {
     title: `${SITE_DOMAIN}/a/${name} RSS feed`,
     description: `${SITE_DESCRIPTION} ${category.description || ''}`,
     feed_url: `${SITE_URL}/api/1/posts/${name}/rss?sort=${sort}`,
-    site_url: '${SITE_URL}',
+    site_url: `${SITE_URL}`,
+    image_url: `${SITE_URL}/images/favicon-196x196.png`,
+    copyright: `&copy; 2020 ${SITE_NAME}`,
+    language: 'en',
+    pubDate: new Date(),
+    ttl: '60',
+    custom_namespaces: {
+      media: 'http://search.yahoo.com/mrss/',
+    },
+  });
+
+  posts.map(item => {
+    const { title, category, text, hashtags } = item;
+    const categories = [category.name, ...hashtags];
+    const author = item.author.username;
+    const url = `${SITE_URL}/a/${category.name}/${item._id}`;
+    const image_custom_element = {
+      'media:content': [
+        {
+          _attr: {
+            url: item.thumb,
+            medium: 'image',
+          },
+        },
+      ],
+    };
+    feed.item({
+      title,
+      url, // link to the item
+      guid: item.id, // optional - defaults to url
+      categories, // optional - array of item categories
+      author, // optional - defaults to feed author property
+      date: item.created, // any format that js Date can parse.
+      description: text || '',
+      custom_elements: [image_custom_element], // any format that js Date can parse.
+    });
+  });
+
+  const xml = feed.xml({ indent: true });
+  res.type('application/xml');
+  res.send(xml);
+};
+
+export const listByHashtag = async (req, res) => {
+  // const cutoff = Date.now() - 86400 * 14 * 1000;
+  const { sort = '-created' } = req.query;
+  const hashtag = req.params.hashtag;
+  const posts = await Post.find({ hashtags: hashtag })
+    .populate('author')
+    .populate('category')
+    .sort(sort)
+    .limit(20);
+  const feed = new RSS({
+    title: `${SITE_DOMAIN}/tag/${hashtag} RSS feed`,
+    description: `${SITE_DESCRIPTION}`,
+    feed_url: `${SITE_URL}/api/1/posts/rss/tags/${hashtag}?sort=${sort}`,
+    site_url: `${SITE_URL}`,
     image_url: `${SITE_URL}/images/favicon-196x196.png`,
     copyright: `&copy; 2020 ${SITE_NAME}`,
     language: 'en',
@@ -290,4 +346,5 @@ export default {
   listByUser,
   sitemap,
   listBySubscriptions,
+  listByHashtag,
 };
