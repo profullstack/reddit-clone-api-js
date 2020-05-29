@@ -23,6 +23,7 @@ router.get('/sitemap.xml', rss.sitemap);
 router.get('/posts/:category', posts.list);
 router.get('/posts/user/:userId', posts.listByUser);
 router.get('/posts/:category/rss', rss.listByCategory);
+router.get('/posts/rss/tags/:hashtag', rss.listByHashtag);
 router.get('/post/:post', posts.show);
 router.post('/posts', jwtAuth, posts.validate, wrap(posts.create));
 router.delete('/post/:post', jwtAuth, postAuth, posts.destroy);
@@ -57,6 +58,7 @@ router.post('/payments/create', jwtAuth, payments.create);
 router.post('/payments', payments.status);
 router.get('/payments/list', jwtAuth, payments.list);
 router.get('/search/posts', search.posts);
+router.get('/tags/:hashtag', posts.list);
 router.use('*', (req, res) => res.status(404).json({ message: 'not found' }));
 router.use((err, req, res, next) => res.status(500).json({ errors: err.message }));
 

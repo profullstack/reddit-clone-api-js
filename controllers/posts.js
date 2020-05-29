@@ -46,6 +46,10 @@ export const list = async (req, res) => {
       const author = await User.findOne({ username });
       search.author = author != undefined ? author._id : null;
     }
+    if (typeof req.params.hashtag !== 'undefined') {
+      const hashtag = req.params.hashtag;
+      search.hashtags = hashtag;
+    }
   }
 
   if (req.query.sort != 'comments') {
@@ -142,7 +146,7 @@ export const listByUser = async (req, res) => {
 };
 
 export const create = async (req, res, next) => {
-  const { title, url, category, type, text, thumb } = req.body;
+  const { title, url, category, type, text, thumb, hashtags } = req.body;
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   let existingPost;
 
@@ -173,6 +177,7 @@ export const create = async (req, res, next) => {
     type,
     text,
     thumb,
+    hashtags
   }).catch((err) => {
     console.error(err);
     res.status(422).json(err);
@@ -223,6 +228,14 @@ export const validate = async (req, res, next) => {
 
       .isLength({ min: 1 })
       .withMessage('cannot be blank'),
+    body('hashtags')
+      .custom(hashtags => {
+        hashtags.forEach(tag => {
+          if (tag.length >= 40) throw new Error();
+        });
+        return Promise.resolve();
+      })
+      .withMessage('must be at most 40 characters long'),
   ];
 
   if (req.body.type === 'link') {

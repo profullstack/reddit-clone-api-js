@@ -32,6 +32,7 @@ const postSchema = new Schema({
   text: { type: String },
   ranking: { type: Number, default: 1, index: true },
   sponsored: { type: Boolean, default: false },
+  hashtags: [String],
 });
 
 postSchema.set('toJSON', { getters: true, virtuals: true });
