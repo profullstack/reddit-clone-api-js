@@ -228,6 +228,14 @@ export const validate = async (req, res, next) => {
 
       .isLength({ min: 1 })
       .withMessage('cannot be blank'),
+    body('hashtags')
+      .custom(hashtags => {
+        hashtags.forEach(tag => {
+          if (tag.length >= 40) throw new Error();
+        });
+        return Promise.resolve();
+      })
+      .withMessage('must be at most 40 characters long'),
   ];
 
   if (req.body.type === 'link') {
