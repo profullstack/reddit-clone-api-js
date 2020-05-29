@@ -51,6 +51,7 @@ function getRankedItems(callback) {
         type: '$type',
         text: '$text',
         sponsored: '$sponsored',
+        hashtags: '$hashtags',
         ranking: {
           $divide: [
             {
