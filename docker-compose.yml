@@ -13,6 +13,7 @@ services:
     volumes:
       - ./index.js:/usr/src/app/index.js
       - ./.env:/usr/src/app/.env
+      - ./uploads:/usr/src/app/uploads
     networks:
       - ${DOCKER_NETWORK_NAME}
   mongo:
