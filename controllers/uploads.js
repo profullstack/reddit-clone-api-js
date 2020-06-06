@@ -1,5 +1,6 @@
 import multer from 'multer';
 import shortid from 'shortid';
+import fs from 'fs';
 import Upload from '../models/upload';
 
 const storage = multer.diskStorage({
@@ -36,7 +37,7 @@ export const multerUpload = multer({
   fileFilter,
 });
 
-export const up = async (req, res) => {
+export const uploadFile = async (req, res) => {
   if (req.file) {
     await Upload.create({
       name: req.file.id,
@@ -54,7 +55,21 @@ export const up = async (req, res) => {
   }
 };
 
+export const deleteFile = filename => {
+  fs.unlink(`uploads/images/${filename}`, async err => {
+    if (err) {
+      fs.unlink(`uploads/videos/${filename}`, err2 => {
+        if (err2) throw err2;
+      });
+    }
+    
+    const name = (filename.split('.'))[0];
+    await Upload.deleteOne({ name });
+  });
+};
+
 export default {
-  up,
+  uploadFile,
   multerUpload,
+  deleteFile,
 };
