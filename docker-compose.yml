@@ -11,7 +11,7 @@ services:
     links:
       - mongo
     volumes:
-      - ./index.js:/usr/src/app/index.js
+      #      - ./index.js:/usr/src/app/index.js
       - ./.env:/usr/src/app/.env
       - ./uploads:/usr/src/app/uploads
     networks:
@@ -64,5 +64,6 @@ networks:
     name: ${DOCKER_NETWORK_NAME}
 volumes:
   mongo_data: {}
+  uploads: {}
   data01:
     driver: local
