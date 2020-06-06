@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, static as expressStatic } from 'express';
 import { jwtAuth, postAuth, commentAuth } from './auth';
 import users from './controllers/users';
 import posts from './controllers/posts';
@@ -8,6 +8,7 @@ import retrieve from './controllers/retrieve';
 import search from './controllers/search';
 import rss from './controllers/rss';
 import payments from './controllers/payments';
+import uploads from './controllers/uploads';
 
 const wrap = fn => (...args) => fn(...args).catch(args[2]);
 
@@ -23,6 +24,7 @@ router.get('/sitemap.xml', rss.sitemap);
 router.get('/posts/:category', posts.list);
 router.get('/posts/user/:userId', posts.listByUser);
 router.get('/posts/:category/rss', rss.listByCategory);
+router.get('/posts/rss/tags/:hashtag', rss.listByHashtag);
 router.get('/post/:post', posts.show);
 router.post('/posts', jwtAuth, posts.validate, wrap(posts.create));
 router.delete('/post/:post', jwtAuth, postAuth, posts.destroy);
@@ -57,6 +59,12 @@ router.post('/payments/create', jwtAuth, payments.create);
 router.post('/payments', payments.status);
 router.get('/payments/list', jwtAuth, payments.list);
 router.get('/search/posts', search.posts);
+router.get('/tags/:hashtag', posts.list);
+router.post('/upload', jwtAuth, uploads.multerUpload.single('file'), uploads.uploadFile);
+
+router.use('/i', expressStatic('uploads/images'));
+router.use('/v', expressStatic('uploads/videos'));
+
 router.use('*', (req, res) => res.status(404).json({ message: 'not found' }));
 router.use((err, req, res, next) => res.status(500).json({ errors: err.message }));
 

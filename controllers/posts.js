@@ -2,9 +2,11 @@ import { body, validationResult } from 'express-validator';
 import Post from '../models/post';
 import User from '../models/user';
 import Category from '../models/category';
+import Upload from '../models/upload';
 import { cache, getAsync, setAsync } from '../cache';
 import search from '../search';
 import getRandomNumber from '../utils/random';
+import { deleteFile } from './uploads';
 
 export const load = async (req, res, next, id) => {
   try {
@@ -45,6 +47,10 @@ export const list = async (req, res) => {
       const username = req.params.user;
       const author = await User.findOne({ username });
       search.author = author != undefined ? author._id : null;
+    }
+    if (typeof req.params.hashtag !== 'undefined') {
+      const hashtag = req.params.hashtag;
+      search.hashtags = hashtag;
     }
   }
 
@@ -142,7 +148,7 @@ export const listByUser = async (req, res) => {
 };
 
 export const create = async (req, res, next) => {
-  const { title, url, category, type, text, thumb } = req.body;
+  const { title, url, category, type, text, thumb, hashtags, mediaName } = req.body;
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   let existingPost;
 
@@ -173,6 +179,8 @@ export const create = async (req, res, next) => {
     type,
     text,
     thumb,
+    hashtags,
+    mediaName,
   }).catch((err) => {
     console.error(err);
     res.status(422).json(err);
@@ -183,6 +191,7 @@ export const create = async (req, res, next) => {
   await User.findOneAndUpdate({ _id: newPost.category.owner }, { $inc: { karma: 5 } }).catch(
     console.error,
   );
+  if (type === 'media') await Upload.findOneAndUpdate({ name: mediaName }, { post: post.id }).catch(console.error);
 
   // add to elastic search
   await search.index({
@@ -214,7 +223,7 @@ export const validate = async (req, res, next) => {
       .exists()
       .withMessage('is required')
 
-      .isIn(['link', 'text'])
+      .isIn(['link', 'text', 'media'])
       .withMessage('must be a link or text post'),
 
     body('category')
@@ -223,9 +232,17 @@ export const validate = async (req, res, next) => {
 
       .isLength({ min: 1 })
       .withMessage('cannot be blank'),
+    body('hashtags')
+      .custom(hashtags => {
+        hashtags.forEach(tag => {
+          if (tag.length >= 40) throw new Error();
+        });
+        return Promise.resolve();
+      })
+      .withMessage('must be at most 40 characters long'),
   ];
 
-  if (req.body.type === 'link') {
+  if (req.body.type === 'link' || req.body.type === 'media') {
     validations.push(
       body('url')
         .exists()
@@ -281,6 +298,10 @@ export const unvote = async (req, res) => {
 
 export const destroy = async (req, res) => {
   await req.post.remove();
+  if (req.post.type === 'media') {
+    const upload = await Upload.findOne({ post: req.post.id });
+    await deleteFile(upload.path);
+  }
   res.json({ message: 'success' });
 };
 
