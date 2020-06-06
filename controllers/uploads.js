@@ -18,7 +18,7 @@ const fileFilter = (req, file, cb) => {
   const videoExtensions = ['mov', 'mp4', 'webm'];
   const imageExtensions = ['jpg', 'svg', 'jpeg', 'png', 'gif'];
 
-  file.extension = file.originalname.split('.').pop();
+  file.extension = file.originalname.split('.').pop().toLowerCase();
 
   if (videoExtensions.includes(file.extension)) {
     file.type = 'video';
