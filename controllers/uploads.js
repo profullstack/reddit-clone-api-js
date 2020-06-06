@@ -43,6 +43,7 @@ export const uploadFile = async (req, res) => {
       name: req.file.id,
       author: req.user.id,
       type: req.file.type,
+      path: req.file.path,
     })
       .catch(err => res.status(500).send(err));
 
@@ -56,17 +57,13 @@ export const uploadFile = async (req, res) => {
   }
 };
 
-export const deleteFile = filename => {
-  fs.unlink(`uploads/images/${filename}`, async err => {
-    if (err) {
-      fs.unlink(`uploads/videos/${filename}`, err2 => {
-        if (err2) throw err2;
-      });
-    }
-
-    const name = (filename.split('.'))[0];
-    await Upload.deleteOne({ name });
-  });
+export const deleteFile = path => {
+  if (path.split('/')[0] === 'uploads') {
+    fs.unlink(path, async err => {
+      if (err) throw err;
+      await Upload.deleteOne({ path });
+    });
+  }
 };
 
 export default {

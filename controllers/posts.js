@@ -6,6 +6,7 @@ import Upload from '../models/upload';
 import { cache, getAsync, setAsync } from '../cache';
 import search from '../search';
 import getRandomNumber from '../utils/random';
+import { deleteFile } from './uploads';
 
 export const load = async (req, res, next, id) => {
   try {
@@ -297,6 +298,10 @@ export const unvote = async (req, res) => {
 
 export const destroy = async (req, res) => {
   await req.post.remove();
+  if (req.post.type === 'media') {
+    const upload = await Upload.findOne({ post: req.post.id });
+    await deleteFile(upload.path);
+  }
   res.json({ message: 'success' });
 };
 

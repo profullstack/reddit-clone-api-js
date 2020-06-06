@@ -5,6 +5,7 @@ const uploadSchema = new Schema({
   author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   name: { type: String, required: true },
   post: { type: Schema.Types.ObjectId, ref: 'Post', default: null },
+  path: { type: String },
 },
 { timestamps: true });
 
