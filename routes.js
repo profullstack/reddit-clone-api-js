@@ -60,7 +60,7 @@ router.post('/payments', payments.status);
 router.get('/payments/list', jwtAuth, payments.list);
 router.get('/search/posts', search.posts);
 router.get('/tags/:hashtag', posts.list);
-router.post('/upload', jwtAuth, uploads.multerUpload.single('file'), uploads.up);
+router.post('/upload', jwtAuth, uploads.multerUpload.single('file'), uploads.uploadFile);
 
 router.use('/i', expressStatic('uploads/images'));
 router.use('/v', expressStatic('uploads/videos'));

@@ -2,6 +2,7 @@ import { body, validationResult } from 'express-validator';
 import Post from '../models/post';
 import User from '../models/user';
 import Category from '../models/category';
+import Upload from '../models/upload';
 import { cache, getAsync, setAsync } from '../cache';
 import search from '../search';
 import getRandomNumber from '../utils/random';
@@ -146,7 +147,7 @@ export const listByUser = async (req, res) => {
 };
 
 export const create = async (req, res, next) => {
-  const { title, url, category, type, text, thumb, hashtags } = req.body;
+  const { title, url, category, type, text, thumb, hashtags, mediaName } = req.body;
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   let existingPost;
 
@@ -177,7 +178,8 @@ export const create = async (req, res, next) => {
     type,
     text,
     thumb,
-    hashtags
+    hashtags,
+    mediaName,
   }).catch((err) => {
     console.error(err);
     res.status(422).json(err);
@@ -188,6 +190,7 @@ export const create = async (req, res, next) => {
   await User.findOneAndUpdate({ _id: newPost.category.owner }, { $inc: { karma: 5 } }).catch(
     console.error,
   );
+  if (type === 'media') await Upload.findOneAndUpdate({ name: mediaName }, { post: post.id }).catch(console.error);
 
   // add to elastic search
   await search.index({
@@ -219,7 +222,7 @@ export const validate = async (req, res, next) => {
       .exists()
       .withMessage('is required')
 
-      .isIn(['link', 'text'])
+      .isIn(['link', 'text', 'media'])
       .withMessage('must be a link or text post'),
 
     body('category')
@@ -238,7 +241,7 @@ export const validate = async (req, res, next) => {
       .withMessage('must be at most 40 characters long'),
   ];
 
-  if (req.body.type === 'link') {
+  if (req.body.type === 'link' || req.body.type === 'media') {
     validations.push(
       body('url')
         .exists()

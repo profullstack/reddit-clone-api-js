@@ -49,6 +49,7 @@ export const uploadFile = async (req, res) => {
     res.status(201).json({
       status: 'file uploaded',
       url: `${process.env.SITE_URL}/api/1/${req.file.type == 'image' ? 'i' : 'v'}/${req.file.filename}`,
+      mediaName: req.file.id,
     });
   } else {
     res.status(500).json({ errors: 'internal server error' });
@@ -62,7 +63,7 @@ export const deleteFile = filename => {
         if (err2) throw err2;
       });
     }
-    
+
     const name = (filename.split('.'))[0];
     await Upload.deleteOne({ name });
   });
