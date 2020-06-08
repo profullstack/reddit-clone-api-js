@@ -28,6 +28,7 @@
     "express": "~4.16.1",
     "express-validator": "^6.1.1",
     "fast-xml-parser": "^3.16.0",
+    "fluent-ffmpeg": "^2.1.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.6.4",
     "morgan": "~1.9.1",
