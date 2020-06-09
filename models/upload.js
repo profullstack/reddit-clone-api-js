@@ -6,6 +6,7 @@ const uploadSchema = new Schema({
   name: { type: String, required: true },
   post: { type: Schema.Types.ObjectId, ref: 'Post', default: null },
   path: { type: String },
+  thumbPath: { type: String },
 },
 { timestamps: true });
 
