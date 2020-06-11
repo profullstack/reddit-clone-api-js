@@ -14,6 +14,7 @@
     "rank": "node -r esm ./bin/ranking.js",
     "search": "node -r esm ./bin/search.js",
     "cleanup": "node -r esm ./bin/cleanup.js",
+    "spammer": "node -r esm ./bin/removeUser.js",
     "docker:cleanup": "docker container exec -it upvotocracy-api npm run cleanup"
   },
   "dependencies": {
