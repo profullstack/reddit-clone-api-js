@@ -50,6 +50,10 @@ services:
       - action.auto_create_index=+*
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
+      nproc: 65535
+      nofile:
+        soft: 200000
+        hard: 400000
       memlock:
         soft: -1
         hard: -1
