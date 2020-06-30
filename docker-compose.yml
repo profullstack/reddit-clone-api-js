@@ -17,9 +17,6 @@ services:
     networks:
       - ${DOCKER_NETWORK_NAME}
   mongo:
-    container_name: coupondeals-mongo
-      - ${DOCKER_NETWORK_NAME}
-  mongo:
     env_file: .env
     container_name: ${DOCKER_CONTAINER_MONGO_NAME}
     restart: always
