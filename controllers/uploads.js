@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   const videoExtensions = ['mov', 'mp4', 'webm'];
-  const imageExtensions = ['jpg', 'svg', 'jpeg', 'png', 'gif'];
+  const imageExtensions = ['jpg', 'svg', 'jpeg', 'png', 'gif', 'pdf'];
 
   file.extension = file.originalname.split('.').pop().toLowerCase();
 
