@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
+import User from '../models/user';
 
 export const createAuthToken = user => {
   const subscriptions = user.subscriptions;
@@ -24,13 +25,24 @@ export const localAuth = (req, res, next) => {
   });
 };
 
-export const jwtAuth = (req, res, next) => {
-  passport.authenticate('jwt', { session: false }, (err, user) => {
-    if (err) return next(err);
+export const jwtAuth = async (req, res, next) => {
+  if (req.headers.authorization && req.headers.authorization.includes('Bearer')) {
+    passport.authenticate('jwt', { session: false }, (err, user) => {
+      if (err) return next(err);
+      if (!user) return res.status(401).json({ errors: 'must be logged in' });
+      req.user = user;
+      next();
+    })(req, res);
+  } else if (req.headers.authorization && req.headers.authorization.includes('Api-Key')) {
+    const key = (req.headers.authorization.split(' '))[1];
+    const user = await User.findOne({ 'apiKeys.key': key })
+      .catch(err => next(err));
     if (!user) return res.status(401).json({ errors: 'must be logged in' });
     req.user = user;
     next();
-  })(req, res);
+  } else {
+    res.status(401).send();
+  }
 };
 
 export const postAuth = (req, res, next) => {
