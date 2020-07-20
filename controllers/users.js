@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult } from 'express-validator';
 import { localAuth, createAuthToken } from '../auth';
 import User from '../models/user';
@@ -129,7 +130,7 @@ export const deleteInbox = async (req, res) => {
   await User.updateOne(
     { _id: req.user.id, 'inbox.comment': req.params.id },
     { $pull: { inbox: { comment: req.params.id } } },
-  ).catch((err) => res.status(500).send(err));
+  ).catch(err => res.status(500).send(err));
   res.status(200).json({ msg: 'Inbox item has been deleted' });
 };
 
@@ -221,6 +222,31 @@ export const removeSubscription = async (req, res) => {
   }
 };
 
+export const getApiKeys = async (req, res) => {
+  const user = await User.findOne({ _id: req.user.id }, { apiKeys: true })
+    .catch(err => res.status(500).send(err.message));
+
+  res.json({ keys: user.apiKeys });
+};
+
+export const newApiKey = async (req, res) => {
+  const { keyName } = req.body;
+  const key = uuidv4();
+
+  await User.findOneAndUpdate({ _id: req.user.id }, { $push: { apiKeys: { keyName, key } } });
+
+  res.json({ key, keyName });
+};
+
+export const revokeApiKey = async (req, res) => {
+  await User.findOneAndUpdate(
+    { _id: req.user.id },
+    { $pull: { apiKeys: { key: req.params.apiKey } } },
+  ).catch(err => res.status(500).send(err.message));
+
+  res.status(200).json({ message: 'key revoked' });
+};
+
 export default {
   login,
   register,
@@ -237,4 +263,7 @@ export default {
   updateBitcoinAddress,
   addSubscription,
   removeSubscription,
+  newApiKey,
+  getApiKeys,
+  revokeApiKey,
 };
