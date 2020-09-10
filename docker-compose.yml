@@ -49,6 +49,11 @@ services:
       - bootstrap.memory_lock=true
       - action.auto_create_index=+*
       - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    deploy:
+      resources: 
+        limits: 
+          cpus: "0.50"  # Use at most 50% of one CPU core
+          memory: 500M  # Use at most 50 MB of RAM
     ulimits:
       nproc: 65535
       nofile:
