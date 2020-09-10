@@ -136,7 +136,8 @@ export const deleteInbox = async (req, res) => {
 
 export const inboxCount = async (req, res) => {
   const user = await User.findOne({ _id: req.user.id }).select('inbox');
-  const count = user.inbox.length;
+  const count = user && user.inbox.length || 0;
+  
   res.json({ count });
 };
 
