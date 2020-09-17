@@ -1,4 +1,4 @@
-version: "3.5"
+version: "2.4"
 services:
   api:
     env_file: .env
@@ -14,6 +14,9 @@ services:
       #      - ./index.js:/usr/src/app/index.js
       - ./.env:/usr/src/app/.env
       - ./uploads:/usr/src/app/uploads
+    cpus: 1
+    mem_limit: 1G
+    mem_reservation: 1G
     networks:
       - ${DOCKER_NETWORK_NAME}
   mongo:
@@ -49,19 +52,14 @@ services:
       - bootstrap.memory_lock=true
       - action.auto_create_index=+*
       - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
-    deploy:
-      resources: 
-        limits: 
-          cpus: "0.50"  # Use at most 50% of one CPU core
-          memory: 500M  # Use at most 50 MB of RAM
     ulimits:
-      nproc: 65535
+      nproc: 2
       nofile:
-        soft: 65535
-        hard: 65535
+        soft: 256
+        hard: 256
       memlock:
-        soft: -1
-        hard: -1
+        soft: 6400
+        hard: 6400
     volumes:
       - ./data01:/usr/share/elasticsearch/data
     ports:
