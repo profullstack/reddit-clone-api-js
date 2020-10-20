@@ -19,6 +19,9 @@ services:
     mem_reservation: 1G
     networks:
       - ${DOCKER_NETWORK_NAME}
+    cpus: 1
+    mem_limit: 1G
+    mem_reservation: 1G
   mongo:
     env_file: .env
     container_name: ${DOCKER_CONTAINER_MONGO_NAME}
@@ -57,9 +60,9 @@ services:
       nofile:
         soft: 256
         hard: 256
-      memlock:
-        soft: 6400
-        hard: 6400
+    cpus: 1
+    mem_limit: 4G
+    #    mem_reservation: 2G
     volumes:
       - ./data01:/usr/share/elasticsearch/data
     ports:
