@@ -52,14 +52,13 @@ services:
       - bootstrap.memory_lock=true
       - action.auto_create_index=+*
       - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    cpus: 1
+    mem_limit: 4G
+    #    mem_reservation: 2G
     ulimits:
-      nproc: 2
-      nofile:
-        soft: 256
-        hard: 256
       memlock:
-        soft: 6400
-        hard: 6400
+        soft: -1
+        hard: -1
     volumes:
       - ./data01:/usr/share/elasticsearch/data
     ports:
