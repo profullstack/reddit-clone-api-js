@@ -67,7 +67,7 @@ services:
     networks:
       - ${DOCKER_NETWORK_NAME}
 networks:
-  iownthedomain-network:
+  upvotocracy-network:
     name: ${DOCKER_NETWORK_NAME}
 volumes:
   mongo_data: {}
