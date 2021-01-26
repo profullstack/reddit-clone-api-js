@@ -1,6 +1,6 @@
 FROM node:lts-alpine3.12
 RUN mkdir -p /usr/src/app
-RUN apk add vim python python-dev py-pip build-base curl ffmpeg
+RUN apk add vim python3 python3-dev py3-pip build-base curl ffmpeg
 WORKDIR /usr/src/app
 COPY package.json /usr/src/app/
 RUN npm install --production
