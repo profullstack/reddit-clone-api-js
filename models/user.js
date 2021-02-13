@@ -17,6 +17,7 @@ const userSchema = new Schema(
       select: false,
     },
     bitcoinAddress: { type: String },
+    nimiqAddress: { type: String },
     links: [
       {
         name: String,
@@ -31,11 +32,13 @@ const userSchema = new Schema(
         default: [],
       },
     ],
-    apiKeys: [ {
-      _id: false,
-      keyName: String,
-      key: String, 
-    }],
+    apiKeys: [
+      {
+        _id: false,
+        keyName: String,
+        key: String,
+      },
+    ],
   },
   { collation: { locale: 'en', strength: 1 } },
 );

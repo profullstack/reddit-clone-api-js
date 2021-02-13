@@ -136,8 +136,8 @@ export const deleteInbox = async (req, res) => {
 
 export const inboxCount = async (req, res) => {
   const user = await User.findOne({ _id: req.user.id }).select('inbox');
-  const count = user && user.inbox.length || 0;
-  
+  const count = (user && user.inbox.length) || 0;
+
   res.json({ count });
 };
 
@@ -164,6 +164,23 @@ export const getBitcoinAddress = async (req, res) => {
   res.send(user.bitcoinAddress);
 };
 
+export const updateNimiqAddress = async (req, res) => {
+  await User.findOneAndUpdate(
+    { _id: req.user.id },
+    { nimiqAddress: req.body.nimiqaddress },
+    { upsert: true },
+  ).catch(err => {
+    console.log(err);
+    res.status(500).send();
+  });
+  res.status(201).send();
+};
+
+export const getNimiqAddress = async (req, res) => {
+  const user = await User.findOne({ username: req.body.username });
+  res.send(user.nimiqAddress);
+};
+
 export const getLinks = async (req, res) => {
   const user = await User.findOne({ username: req.body.username });
   res.json(user.links);
@@ -182,8 +199,9 @@ export const updateLinks = async (req, res) => {
 };
 
 export const addSubscription = async (req, res) => {
-  const user = await User.findOne({ _id: req.user.id, subscriptions: req.params.id })
-    .catch(err => res.status(500).send(err.message));
+  const user = await User.findOne({ _id: req.user.id, subscriptions: req.params.id }).catch(err =>
+    res.status(500).send(err.message),
+  );
 
   if (user == null) {
     await User.findOneAndUpdate(
@@ -203,8 +221,9 @@ export const addSubscription = async (req, res) => {
 };
 
 export const removeSubscription = async (req, res) => {
-  const user = await User.findOne({ _id: req.user.id, subscriptions: req.params.id })
-    .catch(err => res.status(500).send(err.message));
+  const user = await User.findOne({ _id: req.user.id, subscriptions: req.params.id }).catch(err =>
+    res.status(500).send(err.message),
+  );
 
   if (user != null) {
     await User.findOneAndUpdate(
@@ -224,8 +243,9 @@ export const removeSubscription = async (req, res) => {
 };
 
 export const getApiKeys = async (req, res) => {
-  const user = await User.findOne({ _id: req.user.id }, { apiKeys: true })
-    .catch(err => res.status(500).send(err.message));
+  const user = await User.findOne({ _id: req.user.id }, { apiKeys: true }).catch(err =>
+    res.status(500).send(err.message),
+  );
 
   res.json({ keys: user.apiKeys });
 };
@@ -260,8 +280,10 @@ export default {
   getMe,
   getLinks,
   getBitcoinAddress,
+  getNimiqAddress,
   updateLinks,
   updateBitcoinAddress,
+  updateNimiqAddress,
   addSubscription,
   removeSubscription,
   newApiKey,
