@@ -60,7 +60,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - esdata01:/usr/share/elasticsearch/data
+      - ./data01:/usr/share/elasticsearch/data
     ports:
       - 127.0.0.1:${DOCKER_CONTAINER_ES_PORT}:9200
     networks:
@@ -71,5 +71,5 @@ networks:
 volumes:
   mongo_data: {}
   uploads: {}
-  esdata01:
+  data01:
     driver: local
