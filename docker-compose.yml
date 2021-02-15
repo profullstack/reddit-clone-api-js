@@ -42,13 +42,12 @@ services:
       - ${DOCKER_NETWORK_NAME}
   es01:
     env_file: .env
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
     container_name: ${DOCKER_CONTAINER_ES_NAME}
     restart: always
     environment:
       - node.name=es01
       - cluster.name=es-docker-cluster
-      - cluster.initial_master_nodes=es01
       - bootstrap.memory_lock=true
       - discovery.type=single-node
       - action.auto_create_index=+*
@@ -61,7 +60,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ./data01:/usr/share/elasticsearch/data
+      - esdata01:/usr/share/elasticsearch/data
     ports:
       - 127.0.0.1:${DOCKER_CONTAINER_ES_PORT}:9200
     networks:
@@ -72,5 +71,5 @@ networks:
 volumes:
   mongo_data: {}
   uploads: {}
-  data01:
+  esdata01:
     driver: local
