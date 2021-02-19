@@ -29,13 +29,17 @@ async function getPosts() {
 }
 
 async function checkIndices() {
-  const { body } = await search.indices.exists({ index: 'posts' });
+	try {
+		const { body } = await search.indices.exists({ index: 'posts' });
 
-  console.log(body);
+		console.log(body);
 
-  if (!body) {
-    await search.indices.create({ index: 'posts' });
-  }
+		if (!body) {
+			await search.indices.create({ index: 'posts' });
+		}
+	} catch(err) {
+		console.error(err);
+	}
 }
 
 let posts = [];
