@@ -85,7 +85,7 @@ export const validate = async (req, res, next) => {
 export const getByUsername = async (req, res) => {
   const { username } = req.params;
   const user = await User.findOne({ username })
-    .select('-inbox')
+    .select('-inbox -apiKeys')
     .catch(console.error);
 
   res.send(user);
