@@ -98,9 +98,14 @@ export const update = async (req, res) => {
     _id, name, description, nsfw, image,
   } = req.body;
   const owner = req.user.id;
-  const category = await Category.findOneAndUpdate({ _id, owner }, {
-    name, description, owner, nsfw, image,
-  });
+  const newData = {
+    name,
+    description,
+    owner,
+    nsfw,
+  };
+  if (image != null) newData.image = image;
+  const category = await Category.findOneAndUpdate({ _id, owner }, newData);
 
   if (category == null) return res.status(404).send();
 
