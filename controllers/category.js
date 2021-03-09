@@ -75,7 +75,7 @@ export const validate = async (req, res, next) => {
 
   validations.push(
     body('name').custom(async name => {
-      const exists = await Category.countDocuments({ name });
+      const exists = await Category.countDocuments({ name, _id: { $ne: req.body._id } });
       if (exists) throw new Error('already exists');
     }),
   );
@@ -93,9 +93,30 @@ export const validate = async (req, res, next) => {
   res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
 };
 
+export const update = async (req, res) => {
+  const {
+    _id, name, description, nsfw, image,
+  } = req.body;
+  const owner = req.user.id;
+  const newData = {
+    name,
+    description,
+    owner,
+    nsfw,
+  };
+  if (image != null) newData.image = image;
+  const category = await Category.findOneAndUpdate({ _id, owner }, newData);
+
+  if (category == null) return res.status(404).send();
+
+  cache.del('/categories');
+  res.status(200).json({ status: 'success' });
+};
+
 export default {
   create,
   list,
   validate,
   fetchCategory,
+  update,
 };
