@@ -104,6 +104,7 @@ export const update = async (req, res) => {
 
   if (category == null) return res.status(404).send();
 
+  cache.del('/categories');
   res.status(200).json({ status: 'success' });
 };
 
