@@ -75,7 +75,7 @@ export const validate = async (req, res, next) => {
 
   validations.push(
     body('name').custom(async name => {
-      const exists = await Category.countDocuments({ name });
+      const exists = await Category.countDocuments({ name, _id: { $ne: req.body._id } });
       if (exists) throw new Error('already exists');
     }),
   );
@@ -98,7 +98,6 @@ export const update = async (req, res) => {
     _id, name, description, nsfw, image,
   } = req.body;
   const owner = req.user.id;
-  console.log(owner);
   const category = await Category.findOneAndUpdate({ _id, owner }, {
     name, description, owner, nsfw, image,
   });
