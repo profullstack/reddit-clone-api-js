@@ -93,9 +93,25 @@ export const validate = async (req, res, next) => {
   res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
 };
 
+export const update = async (req, res) => {
+  const {
+    _id, name, description, nsfw, image,
+  } = req.body;
+  const owner = req.user.id;
+  console.log(owner);
+  const category = await Category.findOneAndUpdate({ _id, owner }, {
+    name, description, owner, nsfw, image,
+  });
+
+  if (category == null) return res.status(404).send();
+
+  res.status(200).json({ status: 'success' });
+};
+
 export default {
   create,
   list,
   validate,
   fetchCategory,
+  update,
 };
