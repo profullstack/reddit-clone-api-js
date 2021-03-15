@@ -67,6 +67,12 @@ userSchema.methods.isValidPassword = async function (password) {
   return match;
 };
 
+userSchema.methods.canEditCategory = function (category) {
+  const id = JSON.stringify(this._id);
+  const owner = JSON.stringify(category.owner);
+  return this.admin ? true : id === owner;
+};
+
 const User = mongoose.model('User', userSchema);
 
 export default User;

@@ -105,12 +105,22 @@ export const update = async (req, res) => {
     nsfw,
   };
   if (image != null) newData.image = image;
-  const category = await Category.findOneAndUpdate({ _id, owner }, newData);
 
-  if (category == null) return res.status(404).send();
+  const user = await User.findOne({ _id: req.user.id });
+  const category = await Category.findOne({ _id });
+  const allowed = await user.canEditCategory(category);
 
-  cache.del('/categories');
-  res.status(200).json({ status: 'success' });
+  if (allowed) {
+    const updated = await Category.findOneAndUpdate({ _id, owner }, newData);
+
+    if (updated == null) return res.status(404).send();
+
+    cache.del('/categories');
+    res.status(200).json({ status: 'success' });
+  } else {
+    res.status(401).json({ status: 'unauthorized' });
+  }
+};
 };
 
 export default {
