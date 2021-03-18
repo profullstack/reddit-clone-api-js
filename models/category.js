@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import Post from './post';
 
 const categorySchema = new Schema({
   owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
@@ -9,6 +10,14 @@ const categorySchema = new Schema({
   nsfw: { type: Boolean, default: false },
   image: { type: String, default: null },
 });
+
+const deleteCategoryPosts = async function del(next) {
+  const id = this.getQuery()._id;
+  await Post.deleteMany({ category: id });
+  next();
+};
+
+categorySchema.pre('deleteOne', deleteCategoryPosts);
 
 const Category = mongoose.model('Category', categorySchema);
 

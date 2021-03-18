@@ -67,6 +67,19 @@ userSchema.methods.isValidPassword = async function (password) {
   return match;
 };
 
+userSchema.methods.canEditCategory = function (category) {
+  const id = JSON.stringify(this._id);
+  const owner = JSON.stringify(category.owner);
+  return this.admin ? true : id === owner;
+};
+
+userSchema.methods.canDeletePost = function (post) {
+  const id = JSON.stringify(this._id);
+  const author = JSON.stringify(post.author.id);
+  console.log(id, author);
+  return this.admin ? true : id === author;
+};
+
 const User = mongoose.model('User', userSchema);
 
 export default User;
