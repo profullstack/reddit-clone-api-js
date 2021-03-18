@@ -121,6 +121,21 @@ export const update = async (req, res) => {
     res.status(401).json({ status: 'unauthorized' });
   }
 };
+
+export const deleteCategory = async (req, res) => {
+  const user = await User.findOne({ _id: req.user.id });
+  const category = await Category.findOne({ _id: req.params.categoryID });
+  const allowed = await user.canEditCategory(category);
+
+  if (allowed) {
+    const deleted = await Category.deleteOne({ _id: req.params.categoryID });
+    if (deleted != null) {
+      res.status(200).json({ status: 'deleted' });
+      cache.del('/categories');
+    }
+  } else {
+    res.status(401).json({ status: 'unauthorized' });
+  }
 };
 
 export default {
@@ -129,4 +144,5 @@ export default {
   validate,
   fetchCategory,
   update,
+  deleteCategory,
 };

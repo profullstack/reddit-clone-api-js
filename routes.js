@@ -39,6 +39,7 @@ router.get('/users/:username', users.getByUsername);
 router.post('/category', jwtAuth, category.validate, wrap(category.create));
 router.get('/category', category.list);
 router.put('/category', jwtAuth, category.validate, category.update);
+router.delete('/category/:categoryID', jwtAuth, category.deleteCategory);
 router.get('/category/:categoryName', category.fetchCategory);
 router.get('/retrieve', retrieve.get);
 router.param('comment', comments.load);
