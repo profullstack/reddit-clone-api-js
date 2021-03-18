@@ -323,12 +323,22 @@ export const unvote = async (req, res) => {
 };
 
 export const destroy = async (req, res) => {
-  await req.post.remove();
-  if (req.post.type === "media") {
-    const upload = await Upload.findOne({ post: req.post.id });
-    await deleteFile(upload.path);
+  const post = await Post.findOne({ _id: req.post._id });
+  const user = await User.findOne({ _id: req.user.id });
+  const allowed = await user.canDeletePost(post);
+
+  if (allowed) {
+    const deleted = await Post.deleteOne({ _id: req.post._id });
+    if (deleted != null) {
+      if (req.post.type === "media") {
+        const upload = await Upload.findOne({ post: req.post.id });
+        deleteFile(upload.path);
+      }
+      res.json({ message: "success" });
+    }
+  } else {
+    res.status(401).json({ status: "unauthorized" });
   }
-  res.json({ message: "success" });
 };
 
 export default {

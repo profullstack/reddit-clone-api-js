@@ -1,5 +1,5 @@
 import { Router, static as expressStatic } from 'express';
-import { jwtAuth, postAuth, commentAuth } from './auth';
+import { jwtAuth, commentAuth } from './auth';
 import users from './controllers/users';
 import posts from './controllers/posts';
 import comments from './controllers/comments';
@@ -27,7 +27,7 @@ router.get('/posts/:category/rss', rss.listByCategory);
 router.get('/posts/rss/tags/:hashtag', rss.listByHashtag);
 router.get('/post/:post', posts.show);
 router.post('/posts', jwtAuth, posts.validate, wrap(posts.create));
-router.delete('/post/:post', jwtAuth, postAuth, posts.destroy);
+router.delete('/post/:post', jwtAuth, posts.destroy);
 router.get('/post/:post/upvote', jwtAuth, posts.upvote);
 router.get('/post/:post/downvote', jwtAuth, posts.downvote);
 router.get('/post/:post/unvote', jwtAuth, posts.unvote);

@@ -73,6 +73,13 @@ userSchema.methods.canEditCategory = function (category) {
   return this.admin ? true : id === owner;
 };
 
+userSchema.methods.canDeletePost = function (post) {
+  const id = JSON.stringify(this._id);
+  const author = JSON.stringify(post.author.id);
+  console.log(id, author);
+  return this.admin ? true : id === author;
+};
+
 const User = mongoose.model('User', userSchema);
 
 export default User;
