@@ -156,7 +156,7 @@ export const updateBitcoinAddress = async (req, res) => {
     console.log(err);
     res.status(500).send();
   });
-  res.status(201).send();
+  res.status(201).json({ status: 'success' });
 };
 
 export const getBitcoinAddress = async (req, res) => {
@@ -173,7 +173,7 @@ export const updateNimiqAddress = async (req, res) => {
     console.log(err);
     res.status(500).send();
   });
-  res.status(201).send();
+  res.status(201).json({ status: 'success' });
 };
 
 export const getNimiqAddress = async (req, res) => {
@@ -195,7 +195,7 @@ export const updateLinks = async (req, res) => {
     console.log(err);
     res.status(500).send();
   });
-  res.status(201).send();
+  res.status(201).json({ status: 'success' });
 };
 
 export const addSubscription = async (req, res) => {
