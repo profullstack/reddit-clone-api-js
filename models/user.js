@@ -80,6 +80,12 @@ userSchema.methods.canDeletePost = function (post) {
   return this.admin ? true : id === author;
 };
 
+userSchema.methods.canDeleteUser = function (user) {
+  // can delete if admin or deleting self
+  const id = JSON.stringify(this._id);
+  const userID = JSON.stringify(user._id);
+  return this.admin ? true : id === userID;
+};
 const User = mongoose.model('User', userSchema);
 
 export default User;
