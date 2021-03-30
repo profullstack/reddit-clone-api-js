@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { deleteFile } from '../controllers/uploads';
 
 const uploadSchema = new Schema({
   type: { type: String, required: true },
@@ -9,6 +10,20 @@ const uploadSchema = new Schema({
   thumbPath: { type: String },
 },
 { timestamps: true });
+
+const deleteRelatedFiles = async function del(next) {
+  const uploads = await this.model.find(this.getQuery());
+  for (const upload of uploads) {
+    await deleteFile(upload.path);
+
+    if (upload.thumbPath) {
+      await deleteFile(upload.thumbPath);
+    }
+  }
+  next();
+};
+
+uploadSchema.pre('deleteMany', deleteRelatedFiles);
 
 
 const upload = mongoose.model('upload', uploadSchema);

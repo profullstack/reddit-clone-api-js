@@ -1,5 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
+import Post from './post';
+import Upload from './upload';
+import Category from './category';
 
 const userSchema = new Schema(
   {
@@ -79,6 +82,36 @@ userSchema.methods.canDeletePost = function (post) {
   console.log(id, author);
   return this.admin ? true : id === author;
 };
+
+userSchema.methods.canDeleteUser = function (user) {
+  // can delete if admin or deleting self
+  const id = JSON.stringify(this._id);
+  const userID = JSON.stringify(user._id);
+  return this.admin ? true : id === userID;
+};
+
+const deleteUserRelated = async function del(next) {
+  const id = this.getQuery()._id;
+
+  const deleteUploads = Upload.deleteMany({ author: id })
+    .catch(err => { return err; });
+  const deleteComments = Post.updateMany({}, { $pull: { comments: { author: id } } })
+    .catch(err => { return err; });
+  const deletePosts = Post.deleteMany({ author: id })
+    .catch(err => { return err; });
+
+  await Promise.all([deleteComments, deletePosts, deleteUploads]);
+
+  // set user's categories to be owned by an admin
+  const admin = await this.model.findOne({ admin: true });
+  if (admin != null) {
+    await Category.update({ owner: id }, { owner: admin._id });
+  }
+
+  next();
+};
+
+userSchema.pre('deleteOne', deleteUserRelated);
 
 const User = mongoose.model('User', userSchema);
 

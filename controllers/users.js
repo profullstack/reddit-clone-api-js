@@ -268,6 +268,21 @@ export const revokeApiKey = async (req, res) => {
   res.status(200).json({ message: 'key revoked' });
 };
 
+export const deleteUser = async (req, res) => {
+  const currentUser = await User.findOne({ _id: req.user.id });
+  const userToDelete = await User.findOne({ _id: req.params.userID });
+  const allowed = await currentUser.canDeleteUser(userToDelete);
+
+  if (allowed) {
+    const deleted = await User.deleteOne({ _id: req.params.userID });
+    if (deleted != null) {
+      res.status(200).json({ status: 'deleted' });
+    }
+  } else {
+    res.status(401).json({ status: 'unauthorized' });
+  }
+};
+
 export default {
   login,
   register,
@@ -289,4 +304,5 @@ export default {
   newApiKey,
   getApiKeys,
   revokeApiKey,
+  deleteUser,
 };
