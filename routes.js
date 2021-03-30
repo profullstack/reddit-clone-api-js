@@ -36,6 +36,7 @@ router.get('/post/:post/:commentId/downvote', jwtAuth, comments.downvote);
 router.get('/user/:user/rss', rss.listByUser);
 router.get('/user/:user', posts.list);
 router.get('/users/:username', users.getByUsername);
+router.delete('/user/:userID', jwtAuth, users.deleteUser);
 router.post('/category', jwtAuth, category.validate, wrap(category.create));
 router.get('/category', category.list);
 router.put('/category', jwtAuth, category.validate, category.update);
