@@ -1,5 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
+import Post from './post';
+import Upload from './upload';
 
 const userSchema = new Schema(
   {
@@ -86,6 +88,24 @@ userSchema.methods.canDeleteUser = function (user) {
   const userID = JSON.stringify(user._id);
   return this.admin ? true : id === userID;
 };
+
+const deleteUserRelated = async function del(next) {
+  const id = this.getQuery()._id;
+
+  const deleteUploads = Upload.deleteMany({ author: id })
+    .catch(err => { return err; });
+  const deleteComments = Post.updateMany({}, { $pull: { comments: { author: id } } })
+    .catch(err => { return err; });
+  const deletePosts = Post.deleteMany({ author: id })
+    .catch(err => { return err; });
+
+  await Promise.all([deleteComments, deletePosts, deleteUploads]);
+
+  next();
+};
+
+userSchema.pre('deleteOne', deleteUserRelated);
+
 const User = mongoose.model('User', userSchema);
 
 export default User;
