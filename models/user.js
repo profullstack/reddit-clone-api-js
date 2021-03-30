@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import Post from './post';
 import Upload from './upload';
+import Category from './category';
 
 const userSchema = new Schema(
   {
@@ -100,6 +101,12 @@ const deleteUserRelated = async function del(next) {
     .catch(err => { return err; });
 
   await Promise.all([deleteComments, deletePosts, deleteUploads]);
+
+  // set user's categories to be owned by an admin
+  const admin = await this.model.findOne({ admin: true });
+  if (admin != null) {
+    await Category.update({ owner: id }, { owner: admin._id });
+  }
 
   next();
 };
