@@ -93,14 +93,12 @@ userSchema.methods.canDeleteUser = function (user) {
 const deleteUserRelated = async function del(next) {
   const id = this.getQuery()._id;
 
-  const deleteUploads = Upload.deleteMany({ author: id })
-    .catch(err => { return err; });
-  const deleteComments = Post.updateMany({}, { $pull: { comments: { author: id } } })
-    .catch(err => { return err; });
-  const deletePosts = Post.deleteMany({ author: id })
-    .catch(err => { return err; });
+  const deleteUploads = Upload.deleteMany({ author: id });
+  const deleteComments = Post.updateMany({}, { $pull: { comments: { author: 1 } } });
+  const deletePosts = Post.deleteMany({ author: id });
 
-  await Promise.all([deleteComments, deletePosts, deleteUploads]);
+  await Promise.all([deleteComments, deletePosts, deleteUploads])
+    .catch(err => { throw err; });
 
   // set user's categories to be owned by an admin
   const admin = await this.model.findOne({ admin: true });
