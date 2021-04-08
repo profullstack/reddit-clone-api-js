@@ -78,7 +78,7 @@ userSchema.methods.canEditCategory = function (category) {
 
 userSchema.methods.canDeletePost = function (post) {
   const id = JSON.stringify(this._id);
-  const author = JSON.stringify(post.author.id);
+  const author = JSON.stringify(post.author ? post.author.id : null);
   console.log(id, author);
   return this.admin ? true : id === author;
 };
