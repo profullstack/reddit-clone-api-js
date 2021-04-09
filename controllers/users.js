@@ -274,9 +274,12 @@ export const deleteUser = async (req, res) => {
   const allowed = await currentUser.canDeleteUser(userToDelete);
 
   if (allowed) {
-    const deleted = await User.deleteOne({ _id: req.params.userID });
+    const deleted = await User.deleteOne({ _id: req.params.userID })
+      .catch(err => res.status(500).json({ errors: err }));
     if (deleted != null) {
       res.status(200).json({ status: 'deleted' });
+    } else {
+      res.status(500).json({ errors: 'user not deleted' });
     }
   } else {
     res.status(401).json({ status: 'unauthorized' });
