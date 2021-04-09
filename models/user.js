@@ -94,7 +94,7 @@ const deleteUserRelated = async function del(next) {
   const id = this.getQuery()._id;
 
   const deleteUploads = Upload.deleteMany({ author: id });
-  const deleteComments = Post.updateMany({}, { $pull: { comments: { author: 1 } } });
+  const deleteComments = Post.updateMany({}, { $pull: { comments: { author: id } } });
   const deletePosts = Post.deleteMany({ author: id });
 
   await Promise.all([deleteComments, deletePosts, deleteUploads])
