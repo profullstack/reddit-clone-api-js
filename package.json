@@ -15,7 +15,8 @@
     "search": "node -r esm ./bin/search.js",
     "cleanup": "node -r esm ./bin/cleanup.js",
     "spammer": "node -r esm ./bin/removeUser.js",
-    "docker:cleanup": "docker container exec -it upvotocracy-api npm run cleanup"
+    "docker:cleanup": "docker container exec -it upvotocracy-api npm run cleanup",
+    "removeOrphanPosts": "node -r esm -r dotenv/config ./bin/removeOrphanPosts.js"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.6.1",
