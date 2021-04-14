@@ -16,6 +16,7 @@
     "cleanup": "node -r esm ./bin/cleanup.js",
     "spammer": "node -r esm ./bin/removeUser.js",
     "docker:cleanup": "docker container exec -it upvotocracy-api npm run cleanup",
+    "docker:orphans": "docker container exec -it upvotocracy-api npm run removeOrphanPosts",
     "removeOrphanPosts": "node -r esm -r dotenv/config ./bin/removeOrphanPosts.js"
   },
   "dependencies": {
