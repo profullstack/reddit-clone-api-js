@@ -1,5 +1,9 @@
 # upvotocracy-api
 
+Live site at [upvotocracy.com](https://upvotocracy.com)
+
+Upvotocracy is an open source reddit clone.
+
 
 # install
 
