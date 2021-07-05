@@ -21,7 +21,7 @@ async function start() {
         category: process.env.BR_CAT_NEWS,
         type: 'link',
         url: 'https://briskreader.com/link/' + item.shortId,
-        hashtags: [],
+        hashtags: item.summary.topics,
         title: item.title,
         thumb: item.meta.thumb,
       }),
