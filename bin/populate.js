@@ -10,6 +10,7 @@ async function start() {
 
   for (let item of data) {
     console.log(item.shortId);
+		const hashtags = item.summary.topics;
 
     const res2 = await fetch('https://upvotocracy.com/api/1/posts', {
       method: 'POST',
@@ -21,7 +22,7 @@ async function start() {
         category: process.env.BR_CAT_NEWS,
         type: 'link',
         url: 'https://briskreader.com/link/' + item.shortId,
-        hashtags: item.summary.topics,
+        hashtags,
         title: item.title,
         thumb: item.meta.thumb,
       }),
