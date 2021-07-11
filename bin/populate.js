@@ -40,6 +40,9 @@ async function bitcoinlatte() {
 	},{
 		tag: 'ETH',
 		cat: process.env.BITCOINLATTE_CAT_ETH
+	},{
+		tag: 'SHIB',
+		cat: process.env.BITCOINLATTE_CAT_SHIB
 	}];
 
 	for (let tag of cryptos) {
