@@ -67,7 +67,7 @@ services:
     networks:
       - ${DOCKER_NETWORK_NAME}
 networks:
-  upvotocracy-network:
+  bitcoinlatte-network:
     name: ${DOCKER_NETWORK_NAME}
 volumes:
   mongo_data: {}
