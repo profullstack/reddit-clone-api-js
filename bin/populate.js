@@ -8,7 +8,6 @@ async function upvotocracy() {
   const res = await fetch(recent);
   const data = await res.json();
 
-
   for (let item of data) {
     console.log(item.shortId);
 		const hashtags = item.summary.topics;
@@ -17,7 +16,7 @@ async function upvotocracy() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + process.env.AUTH_UPVOTOCRACY,
+        Authorization: 'Bearer ' + process.env.AUTH_BRISKREADER,
       },
       body: JSON.stringify({
         category: process.env.UPVOTOCRACY_CAT_NEWS,
