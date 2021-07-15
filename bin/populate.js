@@ -16,7 +16,7 @@ async function upvotocracy() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + process.env.AUTH_BRISKREADER,
+        Authorization: 'Bearer ' + process.env.AUTH_UPVOTOCRACY,
       },
       body: JSON.stringify({
         category: process.env.UPVOTOCRACY_CAT_NEWS,
