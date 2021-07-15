@@ -22,8 +22,8 @@ services:
   mongo:
     env_file: .env
     container_name: ${DOCKER_CONTAINER_MONGO_NAME}
-    restart: always
-    image: mongo:4.2
+    # restart: 
+    image: mongo:5
     env_file: .env
     volumes:
       - ./mongo_data:/data/db
